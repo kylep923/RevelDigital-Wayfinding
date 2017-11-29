@@ -115,8 +115,8 @@
     var cellSize = prefs.getString("cellSize");
 
     var originalTileSize = DATA.scaleInfo[2];
-    var originalWidth = Data.scaleInfo[1];
-    var originalHeight = Data.scaleInfo[0];
+    var originalWidth = DATA.scaleInfo[1];
+    var originalHeight = DATA.scaleInfo[0];
    
     var scaleX = Math.round((width / originalWidth) * originalTileSize);
     var scaleY = Math.round((height / originalHeight) * originalTileSize);
