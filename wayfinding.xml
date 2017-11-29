@@ -49,9 +49,6 @@
   }
   #myCanvas {
     background: url(__UP_imageUrl__) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
     background-size: cover;
     position: absolute;
     top: 0;
@@ -100,10 +97,10 @@
     readInData();
     readInStores();
     var myCanvas = document.getElementById("myCanvas");
-    myCanvas.setAttribute("style","width: " + width + "px; height: " + height + "px;");
+    myCanvas.setAttribute("style","width: " + width + "px; height: " + height + "px; background: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed; background-size: ' + width + 'px '+ height + 'px;');
     
-    var myImg = document.getElementById("myImg");
-    myImg.setAttribute("style","width: " + width + "px; height: " + height + "px; background: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed;');
+    //var myImg = document.getElementById("myImg");
+    //myImg.setAttribute("style","width: " + width + "px; height: " + height + "px; background: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed;');
   }
   function populateButtons(items){
     items.forEach(function(element) {
