@@ -87,6 +87,8 @@
   function onLoad() {
     readInData();
     readInStores();
+    var myCanvas = document.getElementById("myCanvas");
+    myCanvas.setAttribute("style","width:" + width + "px; height:" + height + "px;);
   }
   function populateButtons(items){
     items.forEach(function(element) {
