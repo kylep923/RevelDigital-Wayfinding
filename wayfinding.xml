@@ -144,7 +144,7 @@
     data.forEach(function(element) {
         console.log(element[0]);
         console.log(element[1]);
-        path.add(new Point((element[0] * scaleX), element[1] * scaleY));
+        path.add(new Point(element[0] * scaleX, element[1] * scaleY));
     }, this);
     path.onFrame = function(event) {
         path.strokeColor.hue += 1;
