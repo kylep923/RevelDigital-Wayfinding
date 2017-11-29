@@ -100,7 +100,7 @@
     // background: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed; background-size: ' + width + 'px '+ height + 'px;');
     
     var myImg = document.getElementById("myImg");
-    myImg.setAttribute(src: " + 'url("' + prefs.getString("imageUrl") + '")');
+    myImg.setAttribute("src: ", 'url("' + prefs.getString("imageUrl") + '")');
     //"style","width: " + width + "px; height: " + height + "px;
   }
   function populateButtons(items){
