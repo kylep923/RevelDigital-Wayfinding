@@ -117,6 +117,9 @@
     var scaleX = Math.round(width / (gridWidth));
     var scaleY = Math.round(height / (gridHeight));
 
+    console.log(scaleX);
+    console.log(scaleY);
+
     console.log(width);
     console.log(height);
     console.log("");
@@ -128,6 +131,8 @@
     path.strokeWidth = 5; 
     path.dashArray = [10,5];
     data.forEach(function(element) {
+        console.log(element[0]);
+        console.log(element[1]);
         path.add(new Point(element[0] * scaleX, element[1] * scaleY));
     }, this);
     path.onFrame = function(event) {
