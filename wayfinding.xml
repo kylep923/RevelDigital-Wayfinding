@@ -116,6 +116,13 @@
    
     var scaleX = Math.round(width / (gridWidth));
     var scaleY = Math.round(height / (gridHeight));
+
+    console.log(width);
+    console.log(height);
+    console.log("");
+    console.log(document.getElementById('myCanvas').offsetWidth);
+    console.log(document.getElementById('myCanvas').offsetHeight);
+
     var path = new Path();
     path.strokeColor = 'red';
     path.strokeWidth = 5; 
