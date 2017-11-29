@@ -114,10 +114,7 @@
         toY = element.y;
       }
     }, this);
-    var data = getPath(toX, toY);
-    if (!data[0]) {
-      return;
-    }
+    
     var cellSize = prefs.getString("cellSize");
 
     console.log(originalTileSize);
@@ -126,6 +123,11 @@
    
     var scaleX = ((width / originalWidth) * originalTileSize);
     var scaleY = ((height / originalHeight) * originalTileSize);
+
+    var data = getPath(toX, toY, scaleX, scaleY);
+    if (!data[0]) {
+      return;
+    }
 
     console.log(scaleX);
     console.log(scaleY);
@@ -143,7 +145,7 @@
     data.forEach(function(element) {
         console.log(element[0]);
         console.log(element[1]);
-        path.add(new Point((element[0] * scaleX) + 15, element[1] * scaleY));
+        path.add(new Point((element[0] * scaleX), element[1] * scaleY));
     }, this);
     path.onFrame = function(event) {
         path.strokeColor.hue += 1;
@@ -151,7 +153,7 @@
     path.smooth();
     lastPath = path;
   }
-  function getPath(toX, toY) {
+  function getPath(toX, toY, scaleX, scaleY) {
     var matrix = DATA.nodes.map(function (nested) {
       return nested.map(function (element) {
           return element.walkable ? 0 : 1;
@@ -159,7 +161,7 @@
     });
     var grid = new PF.Grid(matrix);
     var finder = new PF.AStarFinder();
-    var path = finder.findPath(START.x, START.y, toX, toY, grid);
+    var path = finder.findPath(START.x + (scaleX/2), START.y - (scaleY/2), toX + (scaleX/2), toY - (scaleY/2), grid);
     return path;
   }
   function readInData() {
