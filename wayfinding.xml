@@ -114,14 +114,14 @@
     }
     var cellSize = prefs.getString("cellSize");
    
-    var scaleX = width / (gridWidth);
-    var scaleY = height / (gridHeight);
+    var scaleX = Math.round(width / (gridWidth));
+    var scaleY = Math.round(height / (gridHeight));
     var path = new Path();
     path.strokeColor = 'red';
     path.strokeWidth = 5; 
     path.dashArray = [10,5];
     data.forEach(function(element) {
-        path.add(new Point(element[0], element[1]));
+        path.add(new Point(element[0] * scaleX, element[1] * scaleY));
     }, this);
     path.onFrame = function(event) {
         path.strokeColor.hue += 1;
