@@ -21,11 +21,6 @@
 <style type="text/css">
   body *
   {
-    background: url(__UP_imageUrl__) no-repeat center center fixed; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
     line-height: 1.2em; 
     letter-spacing: 0; 
     word-spacing: normal;
@@ -45,6 +40,11 @@
     height: 50px;
   }
   #myCanvas {
+    background: url(__UP_imageUrl__) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     position: relative;
     left: 0;
     z-index: 10;
