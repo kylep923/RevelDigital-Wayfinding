@@ -120,7 +120,7 @@
 
     console.log(originalTileSize);
     console.log(originalWidth);
-    console.logoriginalHeight);
+    console.log(originalHeight);
    
     var scaleX = Math.round((width / originalWidth) * originalTileSize);
     var scaleY = Math.round((height / originalHeight) * originalTileSize);
@@ -177,7 +177,7 @@
 
             console.log(originalTileSize);
             console.log(originalWidth);
-            console.logoriginalHeight);
+            console.log(originalHeight);
             
             gridHeight = DATA.height;
             gridWidth = DATA.width;
