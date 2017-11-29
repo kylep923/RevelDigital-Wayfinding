@@ -50,11 +50,6 @@ submit.onclick = function() {
     var imageWidth = image.clientWidth;
 
     drawArea.setAttribute("style", "width:" + imageWidth + "px; height:" + imageHeight + "px; background-image: " + 'url("' + input.value + '");');
-    var item = {};
-    item["imgHeight"] = imageHeight;
-    item["imgWidth"] = imageWidth;
-    item["tileSize"] = tile_Size.value;
-    scaleObj = item;
 
     console.log(item);
     //console.log(scaleArray);
@@ -92,6 +87,12 @@ submit.onclick = function() {
         Controller.bindEvents();
         //Controller.transition(); // transit to the next state (ready)
     });
+
+    var item = {};
+    item["imgHeight"] = $("svg").height();
+    item["imgWidth"] = $("svg").width();
+    item["tileSize"] = tile_Size.value;
+    scaleObj = item;
 }
 
 addStore.onclick = function() {
