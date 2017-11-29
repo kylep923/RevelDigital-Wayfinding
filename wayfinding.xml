@@ -174,10 +174,12 @@
           var obj = JSON.parse(xhr.responseText);
           if (obj) {
             STORES = obj;
-                 
+            console.log(STORES);
+            
             var index = STORES.map(x => x.name).indexOf('start');
             START = STORES[index];
-        
+            console.log(START);
+
             STORES.splice(index, 1);
       
             populateButtons(STORES);
