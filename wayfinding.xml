@@ -171,7 +171,7 @@
           if (obj) {
             DATA = obj;
 
-            originalTileSize = DATA.scaleInfo[2];
+            originalTileSize = DATA.scaleInfo;
             originalWidth = DATA.scaleInfo[1];
             originalHeight = DATA.scaleInfo[0];
 
