@@ -125,8 +125,8 @@
     console.log(originalWidth);
     console.log(originalHeight);
    
-    var scaleX = ((width / originalWidth) * originalTileSize);
-    var scaleY = ((height / originalHeight) * originalTileSize);
+    var scaleX = Math.round((width / originalWidth) * originalTileSize);
+    var scaleY = Math.round((height / originalHeight) * originalTileSize);
 
     console.log(scaleX);
     console.log(scaleY);
