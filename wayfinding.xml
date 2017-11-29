@@ -48,6 +48,7 @@
     height: 100%;
   }
   #myCanvas {
+    background: url(__UP_imageUrl__) no-repeat center center fixed;
     position: absolute;
     top: 0;
     left: 0;
