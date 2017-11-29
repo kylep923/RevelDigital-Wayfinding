@@ -121,7 +121,7 @@
     path.strokeWidth = 5; 
     path.dashArray = [10,5];
     data.forEach(function(element) {
-        path.add(new Point(element[0] * scaleX, element[1] * scaleY));
+        path.add(new Point(element[0], element[1]));
     }, this);
     path.onFrame = function(event) {
         path.strokeColor.hue += 1;
