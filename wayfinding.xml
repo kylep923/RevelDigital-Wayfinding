@@ -98,7 +98,7 @@
     myCanvas.setAttribute("style","width: " + width + "px; height: " + height + "px;");
     
     var myImg = document.getElementById("myImg");
-    myImg.setAttribute("style","width: " + width + "px; height: " + height + "px;background-image: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed;');
+    myImg.setAttribute("style","width: " + width + "px; height: " + height + "px; background: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed;');
   }
   function populateButtons(items){
     items.forEach(function(element) {
