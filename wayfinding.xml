@@ -71,6 +71,10 @@
   var gridHeight = 0;
   var gridWidth = 0;
   var lastPath;
+
+  var originalTileSize = 0;
+  var originalWidth = 0;
+  var originalHeight = 0;
   
   var prefs = new gadgets.Prefs();
   var width = prefs.getString("rdW");
@@ -114,9 +118,9 @@
     }
     var cellSize = prefs.getString("cellSize");
 
-    var originalTileSize = DATA.scaleInfo[2];
-    var originalWidth = DATA.scaleInfo[1];
-    var originalHeight = DATA.scaleInfo[0];
+    console.log(originalTileSize);
+    console.log(originalWidth);
+    console.logoriginalHeight);
    
     var scaleX = Math.round((width / originalWidth) * originalTileSize);
     var scaleY = Math.round((height / originalHeight) * originalTileSize);
@@ -166,6 +170,14 @@
           var obj = JSON.parse(xhr.responseText);
           if (obj) {
             DATA = obj;
+
+            originalTileSize = DATA.scaleInfo[2];
+            originalWidth = DATA.scaleInfo[1];
+            originalHeight = DATA.scaleInfo[0];
+
+            console.log(originalTileSize);
+            console.log(originalWidth);
+            console.logoriginalHeight);
             
             gridHeight = DATA.height;
             gridWidth = DATA.width;
