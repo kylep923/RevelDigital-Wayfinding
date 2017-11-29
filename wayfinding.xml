@@ -171,9 +171,9 @@
           if (obj) {
             DATA = obj;
 
-            originalTileSize = DATA.scaleInfo;
-            originalWidth = DATA.scaleInfo[1];
-            originalHeight = DATA.scaleInfo[0];
+            originalTileSize = DATA.scaleInfo.tileSize;
+            originalWidth = DATA.scaleInfo.imgWidth;
+            originalHeight = DATA.scaleInfo.imgHeight;
 
             console.log(originalTileSize);
             console.log(originalWidth);
