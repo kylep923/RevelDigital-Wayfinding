@@ -39,8 +39,6 @@ submit.onclick = function() {
     //drawArea.style.backgroundImage = 'url("' + input.value + '")';
 
     var image = document.createElement("IMG");
-    console.log(input.value);
-    console.log("https://as1.reveldigital.com/Uploads/370024%21mall_directory_bsm.jpg");
     image.setAttribute("src", input.value);
     image.setAttribute("id", "drawImage");
     image.setAttribute("style", "visibility: hidden;");
@@ -63,13 +61,6 @@ submit.onclick = function() {
 
     Controller.gridSize[0] = Math.round(imageWidth / parseInt(tile_Size.value));
     Controller.gridSize[1] = Math.round(imageHeight / parseInt(tile_Size.value));
-
-    console.log(Math.round(imageWidth / parseInt(tile_Size.value)));
-    console.log(Math.round(imageHeight / parseInt(tile_Size.value)));
-    console.log(tile_Size.value);
-
-    //Controller.gridSize[0] = grid_width.value;
-    //Controller.gridSize[1] = grid_height.value;
 
     var numCols = Controller.gridSize[0],
         numRows = Controller.gridSize[1];
@@ -112,7 +103,9 @@ exportStore.onclick = function() {
 
 get_array.onclick = function() {
     var gridArray = Controller.grid;
+    gridArray["storeInfo"] = storeArray;
     gridArray["scaleInfo"] = scaleObj;
+    gridArray["imageInfo"] = input.value;
     var jsonGrid = JSON.stringify(gridArray);
 
     download("Grid.json", jsonGrid);
