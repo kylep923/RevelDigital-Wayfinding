@@ -73,6 +73,8 @@
     var originalWidth = 0;
     var originalHeight = 0;
 
+    var imageURL = "";
+
     var prefs = new gadgets.Prefs();
     var width = prefs.getString("rdW");
     var height = prefs.getString("rdH");
@@ -178,6 +180,8 @@
                     var obj = JSON.parse(xhr.responseText);
                     if (obj) {
                         DATA = obj;
+
+                        imageURL = DATA.imageInfo;
 
                         originalTileSize = DATA.scaleInfo.tileSize;
                         originalWidth = DATA.scaleInfo.imgWidth;
