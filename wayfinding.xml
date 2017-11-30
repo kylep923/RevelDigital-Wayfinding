@@ -87,7 +87,7 @@
     var originalWidth = 0;
     var originalHeight = 0;
 
-    var imageURL = "";
+    var imageURL;
 
     var prefs = new gadgets.Prefs();
     var width = prefs.getString("rdW");
