@@ -198,7 +198,9 @@
 
                         imageURL = DATA.imageInfo;
 
+                        var myCanvas = document.getElementById("myCanvas");
                         console.log(imageURL);
+                        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
 
                         originalTileSize = DATA.scaleInfo.tileSize;
                         originalWidth = DATA.scaleInfo.imgWidth;
