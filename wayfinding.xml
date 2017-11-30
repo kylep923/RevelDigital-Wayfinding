@@ -101,7 +101,7 @@
         readInData();
         readInStores();
         var myCanvas = document.getElementById("myCanvas");
-        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '") no-repeat center center fixed; background-size: ' + width + 'px ' + height + 'px;');
+        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '") no-repeat center center fixed; background-size: ' + width: + 'px ' + height: + 'px;');
 
         //var myImg = document.getElementById("myImg")
         //myImg.setAttribute("style", "width: " + width + "px; height: " + height + "px;");
