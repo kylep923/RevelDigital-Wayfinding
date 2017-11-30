@@ -49,7 +49,7 @@ submit.onclick = function() {
     var imageHeight = image.clientHeight;
     var imageWidth = image.clientWidth;
 
-    drawArea.setAttribute("style", "width:" + imageWidth + "px; height:" + imageHeight + "px; background-image: " + 'url("' + input.value + '");');
+    //drawArea.setAttribute("style", "width:" + imageWidth + "px; height:" + imageHeight + "px; background-image: " + 'url("' + input.value + '");');
 
     console.log(item);
     //console.log(scaleArray);
@@ -93,6 +93,8 @@ submit.onclick = function() {
     item["imgWidth"] = $("svg").width();
     item["tileSize"] = tile_Size.value;
     scaleObj = item;
+
+    drawArea.setAttribute("style", "width:" + $("svg").width() + "px; height:" + $("svg").height() + "px; background-image: " + 'url("' + input.value + '");background-size: ' + $("svg").width() + 'px ' + $("svg").height() + 'px;');
 }
 
 addStore.onclick = function() {
