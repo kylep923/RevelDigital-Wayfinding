@@ -39,15 +39,6 @@
         height: 50px;
     }
     
-    #myImg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 5;
-        width: __UP_rdW__;
-        height: __UP_rdH__;
-    }
-    
     #myCanvas {
         position: absolute;
         top: 0;
@@ -67,7 +58,6 @@
 
 <body>
     <div>
-        <img id="myImg"></img>
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
@@ -100,12 +90,6 @@
     function onLoad() {
         readInData();
         readInStores();
-        var myCanvas = document.getElementById("myCanvas");
-        console.log(imageURL);
-        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
-
-        //var myImg = document.getElementById("myImg")
-        //myImg.setAttribute("style", "width: " + width + "px; height: " + height + "px;");
     }
 
     function populateButtons(items) {
