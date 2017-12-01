@@ -1,4 +1,4 @@
-$(document).ready(function() {
+function loadEditor() {
     if (!Raphael.svg) {
         window.location = './notsupported.html';
     }
@@ -11,7 +11,7 @@ $(document).ready(function() {
     // initialize visualization
     Panel.init();
     Controller.init();
-});
+}
 
 var input = document.getElementById("input");
 var store = document.getElementById("store");
