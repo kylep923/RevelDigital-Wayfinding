@@ -1,4 +1,5 @@
 <html>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/pathfinding-browser.min.js" type="text/javascript"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/paper-core.min.js" type="text/javascript"></script>
@@ -25,15 +26,6 @@
         height: 50px;
     }
     
-    #myImg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 5;
-        width: __UP_rdW__;
-        height: __UP_rdH__;
-    }
-    
     #myCanvas {
         position: absolute;
         top: 0;
@@ -53,7 +45,6 @@
 
 <body>
     <div>
-        <img id="myImg" src="__UP_imageUrl__"></img>
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
@@ -73,7 +64,7 @@
     var originalWidth = 0;
     var originalHeight = 0;
 
-    var imageURL = "";
+    var imageURL;
 
     var prefs = new gadgets.Prefs();
     var width = prefs.getString("rdW");
@@ -86,11 +77,6 @@
     function onLoad() {
         readInData();
         readInStores();
-        var myCanvas = document.getElementById("myCanvas");
-        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px background: " + 'url("' + prefs.getString("imageUrl") + '") no-repeat center center fixed; background-size: ' + width + 'px ' + height + 'px;');
-
-        //var myImg = document.getElementById("myImg")
-        //myImg.setAttribute("style", "width: " + width + "px; height: " + height + "px;");
     }
 
     function populateButtons(items) {
@@ -182,6 +168,10 @@
                         DATA = obj;
 
                         imageURL = DATA.imageInfo;
+
+                        var myCanvas = document.getElementById("myCanvas");
+                        console.log(imageURL);
+                        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
 
                         originalTileSize = DATA.scaleInfo.tileSize;
                         originalWidth = DATA.scaleInfo.imgWidth;

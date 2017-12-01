@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBGsq1l5bq6wNSynm7ozOjqI-0gSux0fQc",
+            authDomain: "wayfinding-9f0fe.firebaseapp.com",
+            databaseURL: "https://wayfinding-9f0fe.firebaseio.com",
+            projectId: "wayfinding-9f0fe",
+            storageBucket: "",
+            messagingSenderId: "1052785583392"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+        
+        form {
+            border: 3px solid #f1f1f1;
+        }
+        
+        #login {
+            border: 3px solid #f1f1f1;
+        }
+        
+        input[type=text],
+        input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .cancelbtn {
+            width: auto;
+            padding: 10px 18px;
+            background-color: #f44336;
+        }
+        
+        .imgcontainer {
+            text-align: center;
+            margin: 24px 0 12px 0;
+        }
+        
+        img.avatar {
+            width: 10%;
+            border-radius: 50%;
+        }
+        
+        .container {
+            padding: 16px;
+        }
+        
+        span.psw {
+            float: right;
+            padding-top: 16px;
+        }
+        /* Change styles for span and cancel button on extra small screens */
+        
+        @media screen and (max-width: 300px) {
+            span.psw {
+                display: block;
+                float: none;
+            }
+            .cancelbtn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="login_container" class="container">
+        <h2>Login Form</h2>
+        <div id="login">
+            <div class="imgcontainer">
+                <img src="images/revel_logo.png" alt="Avatar" class="avatar">
+            </div>
+
+            <div class="container">
+                <label><b>Revel API Key</b></label>
+                <input id="api_key" type="text" placeholder="Enter API Key" name="api_key" required>
+
+                <button id="submit_api" type="submit">Login</button>
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+                <button type="button" class="cancelbtn">Cancel</button>
+                <span id="new_user" class="psw">New Login? <a href="#">Click here!</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="grid_list_container" class="container">
+        <h2 id="account_header"></h2>
+        <table id="grids_table"></table>
+    </div>
+
+    <div id="editor_container" class="container">
+        <h2 id="account_header"></h2>
+    </div>
+
+</body>
+
+<script>
+    // Database info and globals
+    var database = firebase.database();
+    var account = null;
+    var api_key;
+
+    //reading
+    /*
+    firebase.database().ref('/testkey').once('value').then(function(snapshot) {
+        console.log(snapshot.val());
+    });
+    //writing
+    firebase.database().ref('/testkey').set({
+        name: 'name',
+        grid: null,
+        description: 'test'
+    });
+    */
+
+    document.getElementById("grid_list_container").style.display = "none";
+    document.getElementById("editor_container").style.display = "none";
+
+    // Start of JS code for login page.
+    submit_api.onclick = function() {
+        // Check if the entered API Key is valid.
+        api_key = document.getElementById("api_key").value;
+        $.ajax({
+            url: "http://api.reveldigital.com/account?api_key=" + api_key,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                console.log(res);
+                firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
+                    account = snapshot.val();
+                    if (!account) {
+                        firebase.database().ref('/' + api_key).set({
+                            accountName: res.name,
+                            grids: []
+                        });
+                    }
+                });
+                document.getElementById("account_header").innerHTML = res.name;
+                loadListPage();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Error: Invalid API Key.");
+            }
+        });
+    }
+
+    new_user.onclick = function() {
+        // Change login button text
+        document.getElementById("submit_api").innerHTML = "Create New Account!";
+        document.getElementById("new_user").innerHTML = "Already a User? <a id='old_user' href='file:///C:/Users/8kyle/OneDrive/Documents/Revel-Wayfinding/ClientSite/login.html'>Click here!</a>";
+    }
+
+    // JS code for page 2
+    function loadListPage() {
+        document.getElementById("grid_list_container").style.display = "inline";
+        document.getElementById("login_container").style.display = "none";
+        document.getElementById("editor_container").style.display = "none";
+        firebase.database().ref('/' + api_key + '/grids').once('value').then(function(snapshot) {
+            // Getting Grid Info From Firebase
+            var keys = Object.keys(snapshot.val());
+            var db = snapshot.val();
+            var grids_table = document.getElementById("grids_table");
+            // Create Table Header Row
+            var thr = document.createElement('tr');
+            // Create table headers
+            var th1 = document.createElement('th');
+            var gridhead = document.createTextNode('Grid Name');
+            th1.appendChild(gridhead);
+            var th2 = document.createElement('th');
+            var descriptionhead = document.createTextNode('Grid Description');
+            th2.appendChild(descriptionhead);
+            var th3 = document.createElement('th');
+            var deleteRow = document.createTextNode('');
+            th3.appendChild(deleteRow);
+            // Add Headers to Row
+            thr.appendChild(th1);
+            thr.appendChild(th2);
+            thr.appendChild(th3);
+            // add header row to Table
+            grids_table.appendChild(thr);
+            for (key in keys) {
+                // Row Info
+                var key = keys[key];
+                var row = db[key];
+                console.log(key);
+                console.log(db);
+                console.log(row.gridDesc);
+                var gridInfo = row.gridInfo;
+                var gridDesc = row.gridDesc;
+                // Creating Rows and Delete button
+                var tr = document.createElement('tr');
+                var td1 = document.createElement('td');
+                var td2 = document.createElement('td');
+                var td3 = document.createElement('td');
+                var delButton = document.createElement('button');
+                // Adding info to rows and delete button
+                var text1 = document.createTextNode(key);
+                var text2 = document.createTextNode(gridDesc);
+                var btnText = document.createTextNode("Delete");
+                td1.appendChild(text1);
+                td2.appendChild(text2);
+                delButton.appendChild(btnText);
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(delButton);
+                grids_table.appendChild(tr);
+            }
+        });
+    }
+
+    function writeGridData(gridName, gridInfo, gridDesc) {
+        firebase.database().ref('/' + api_key + '/grids/' + gridName).set({
+            gridInfo: gridInfo,
+            gridDesc: gridDesc
+        });
+    }
+</script>
+
+</html>
