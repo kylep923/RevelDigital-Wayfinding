@@ -2,7 +2,7 @@
 <Module> 
 <ModulePrefs title="Wayfinding Gadget" description="" author="Revel Digital" background="transparent">
   <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
-  <UserPref name="cellSize" display_name="Cell size in pixels" datatype="string" default_value=""/>
+  <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value=""/>
      
   <!-- The following preferences should not be modified -->
   <UserPref name="ForeColor" datatype="hidden" />
@@ -97,6 +97,7 @@
     var prefs = new gadgets.Prefs();
     var width = prefs.getString("rdW");
     var height = prefs.getString("rdH");
+    var api_key = prefs.getString("apiKey");
     paper.install(window);
     window.onload = function() {
         paper.setup('myCanvas');
@@ -136,7 +137,6 @@
         if (!data[0]) {
             return;
         }
-        var cellSize = prefs.getString("cellSize");
 
         console.log(originalTileSize);
         console.log(originalWidth);
