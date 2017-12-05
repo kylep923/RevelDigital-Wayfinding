@@ -39,11 +39,40 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
     <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px;
+            overflow: hidden;
+            background-color: #333;
+        }
+        
+        li {
+            float: left;
+        }
+        
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        li a:hover {
+            background-color: #111;
+        }
+        
+        .active {
+            background-color: #4CAF50;
+        }
+        
         #new_grid_btn {
             float: right;
         }
         
         table {
+            padding: 10px;
             font-family: arial, sans-serif;
             border-collapse: collapse;
             width: 100%;
@@ -51,7 +80,7 @@
         
         td,
         th {
-            border: 1px solid #dddddd;
+            border: 1px solid #979696;
             text-align: left;
             padding: 8px;
         }
@@ -153,9 +182,16 @@
         </div>
     </div>
 
-    <div id="grid_list_container" class="container">
+    <div id="grid_list_container">
         <div>
-            <h2 id="account_header"></h2>
+            <div>
+                <ul>
+                    <li>
+                        <a id="account_header"></a>
+                    </li>
+                    <li style="float:right"><a class="active" id="logout_btn">Logout</a></li>
+                </ul>
+            </div>
             <table id="grids_table"></table>
             <button id="new_grid_btn">Add New</button>
         </div>
@@ -197,6 +233,7 @@
         <div id="store_panel" class="panel right_panel">
             <h3>Add Store Location</h3>
             <button id="addStore" class="store_button">ADD</button>
+            <button id="back_btn" class="store_button">Back To Grid List</button>
         </div>
         <div id="stats"></div>
 
@@ -218,6 +255,40 @@
     var revel_account = null;
     var api_key;
 
+    // Checking if user has already logged in and brings them to the list page if they are.
+    if (window.localStorage.getItem("api_key")) {
+        console.log(window.localStorage.getItem("api_key"));
+        api_key = window.localStorage.getItem("api_key");
+        $.ajax({
+            url: "http://api.reveldigital.com/account?api_key=" + api_key,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                revel_account = res;
+                firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
+                    account = snapshot.val();
+                    if (!account) {
+                        firebase.database().ref('/' + api_key).set({
+                            accountName: res.name,
+                            grids: []
+                        });
+                    }
+                });
+                document.getElementById("account_header").innerHTML = res.name;
+                loadListPage();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Error: Invalid API Key.");
+            }
+        });
+    } else {
+        document.getElementById("grid_list_container").style.display = "none";
+        document.getElementById("editor_container").style.display = "none";
+    }
+
+    //window.localStorage.setItem("api_key", api_key);
+    //window.localStorage.getItem("api_key");
+
     function writeGridData(gridName, gridInfo, gridDesc) {
         firebase.database().ref('/' + api_key + '/grids/' + gridName).set({
             gridInfo: gridInfo,
@@ -227,7 +298,6 @@
 
     function deleteGridData(gridName) {
         console.log(gridName);
-        removeListTable();
         var del_obj = firebase.database().ref('/' + api_key + '/grids/' + gridName);
         del_obj.remove().then(function(ref) {
             // data has been deleted locally and in the database
@@ -235,14 +305,6 @@
         }, function(error) {
             console.log("Error:", error);
         });
-    }
-
-    // Hiding Page 2-3 divs
-    if (revel_account == null) {
-        document.getElementById("grid_list_container").style.display = "none";
-        document.getElementById("editor_container").style.display = "none";
-    } else {
-        loadListPage();
     }
 
     //-------------------------------------------------------------------------------------
@@ -256,6 +318,8 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
+                window.localStorage.setItem("api_key", api_key);
+                console.log(window.localStorage.getItem("api_key"));
                 revel_account = res;
                 firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
                     account = snapshot.val();
@@ -285,13 +349,14 @@
     // JS code for page 2
     //-------------------------------------------------------------------------------------
     function loadListPage() {
-        document.getElementById("grid_list_container").style.display = "inline";
+        document.getElementById("grid_list_container").style.display = "block";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
         firebase.database().ref('/' + api_key + '/grids').once('value').then(function(snapshot) {
             // Getting Grid Info From Firebase
             var keys = Object.keys(snapshot.val());
             var db = snapshot.val();
+            document.getElementById("grids_table").innerHTML = "";
             var grids_table = document.getElementById("grids_table");
             // Create Table Header Row
             var thr = document.createElement('tr');
@@ -344,8 +409,17 @@
         });
     }
 
-    function removeListTable() {
-        document.getElementById("grids_table").innerHTML = "";
+    logout_btn.onclick = function() {
+        window.localStorage.setItem("api_key", "");
+        document.getElementById("grid_list_container").style.display = "none";
+        document.getElementById("login_container").style.display = "inline";
+        document.getElementById("editor_container").style.display = "none";
+    }
+
+    back_btn.onclick = function() {
+        document.getElementById("grid_list_container").style.display = "inline";
+        document.getElementById("login_container").style.display = "none";
+        document.getElementById("editor_container").style.display = "none";
     }
 
     new_grid_btn.onclick = function() {
