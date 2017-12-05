@@ -166,16 +166,28 @@
 
         <div id="algorithm_panel" class="panel right_panel">
             <h2>Backround Image URL</h2>
-            <input type='text' id='input' />
+            <input type='text' id='input' required/>
             <h3>Tile Size</h3>
-            <input type="number" id="tile_size" min="1" max="50" value="10"> px <br/>
-            <div class="button_list">
-                <input type="submit" class="button" value="Submit" id="submit" /><br/>
-                <input type="submit" class="button" value="Export Map Grid" id="get_array" /><br/>
-            </div>
+            <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
+            <button type="submit" class="button" id="submit">Draw Grid</button>
+            <button class="button" id="get_array">Finish Creating Grid</button>
         </div>
-        <!-- #algorithm_panel -->
 
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <h4>Enter a name for your grid.</h4>
+                <input type="text" id="grid_name"><br/>
+                <h4>Enter a description for your grid.</h4>
+                <input type="text" id="grid_description"><br/>
+                <input type="submit" class="button" value="Add" id="add_name"><br/>
+            </div>
+
+        </div>
+
+        <!-- #algorithm_panel -->
         <div id="play_panel" class="panel right_panel">
             <button id="button1" class="control_button">Start Search</button>
             <button id="button2" class="control_button">Pause Search</button>
@@ -185,7 +197,6 @@
         <div id="store_panel" class="panel right_panel">
             <h3>Add Store Location</h3>
             <button id="addStore" class="store_button">ADD</button>
-            <button id="exportStore" class="store_button">Export</button>
         </div>
         <div id="stats"></div>
 
@@ -194,6 +205,7 @@
         <script type="text/javascript" src="./js/controller.js"></script>
         <script type="text/javascript" src="./js/panel.js"></script>
 
+        <img id="drawImage" style="visibility: hidden;">
     </div>
 
 </body>
@@ -213,10 +225,25 @@
         });
     }
 
+    function deleteGridData(gridName) {
+        console.log(gridName);
+        removeListTable();
+        var del_obj = firebase.database().ref('/' + api_key + '/grids/' + gridName);
+        del_obj.remove().then(function(ref) {
+            // data has been deleted locally and in the database
+            loadListPage();
+        }, function(error) {
+            console.log("Error:", error);
+        });
+    }
 
     // Hiding Page 2-3 divs
-    document.getElementById("grid_list_container").style.display = "none";
-    document.getElementById("editor_container").style.display = "none";
+    if (revel_account == null) {
+        document.getElementById("grid_list_container").style.display = "none";
+        document.getElementById("editor_container").style.display = "none";
+    } else {
+        loadListPage();
+    }
 
     //-------------------------------------------------------------------------------------
     // Start of JS code for login page.
@@ -289,9 +316,9 @@
                     // Row Info
                     var key = keys[key];
                     var row = db[key];
-                    console.log(key);
-                    console.log(db);
-                    console.log(row.gridDesc);
+                    //console.log(key);
+                    //console.log(db);
+                    //console.log(row.gridDesc);
                     var gridInfo = row.gridInfo;
                     var gridDesc = row.gridDesc;
                     // Creating Rows and Delete button
@@ -300,20 +327,25 @@
                     var td2 = document.createElement('td');
                     var td3 = document.createElement('td');
                     var delButton = document.createElement('button');
+                    td3.innerHTML = "<button onclick=deleteGridData('" + key + "')>Delete</button>";
                     // Adding info to rows and delete button
                     var text1 = document.createTextNode(key);
                     var text2 = document.createTextNode(gridDesc);
                     var btnText = document.createTextNode("Delete");
                     td1.appendChild(text1);
                     td2.appendChild(text2);
-                    delButton.appendChild(btnText);
+                    //delButton.appendChild(btnText);
                     tr.appendChild(td1);
                     tr.appendChild(td2);
-                    tr.appendChild(delButton);
+                    tr.appendChild(td3);
                     grids_table.appendChild(tr);
                 }
             }
         });
+    }
+
+    function removeListTable() {
+        document.getElementById("grids_table").innerHTML = "";
     }
 
     new_grid_btn.onclick = function() {
