@@ -1,0 +1,141 @@
+/* The Modal (background) */
+
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
+
+/* Modal Content */
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    overflow: scroll;
+}
+
+#draw_area {
+    background: no-repeat;
+    background-size: 100%;
+    background-position: center top;
+}
+
+input {
+    cursor: pointer;
+}
+
+.button {
+    margin-top: 15px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0px;
+    padding: 5px;
+    font-weight: normal;
+}
+
+.panel {
+    position: fixed;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    cursor: default;
+}
+
+.right_panel {
+    width: 250px;
+    right: 20px;
+}
+
+#algorithm_panel {
+    right: 20px;
+    top: 20px;
+}
+
+.store_button {
+    padding: 10px 10px;
+}
+
+button {
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    font-size: 90%;
+    cursor: pointer;
+    padding: 2px 8px;
+    margin: 0 2%;
+    width: 28%;
+}
+
+button:hover {
+    background: rgba(109, 105, 105, 0.9);
+}
+
+#stats {
+    position: fixed;
+    bottom: 40px;
+    left: 35px;
+    color: #0a0;
+    font-size: 85%;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+}
+
+a {
+    color: #33f;
+}
+
+.white {
+    color: #fff;
+}
+
+.green {
+    color: #0d0;
+}
+
+.red {
+    color: #ff9166;
+}
+
+idecontainer {
+    width: 100%;
+    /* Width of the outside container */
+}
+
+rect {
+    fill-opacity: 0.3;
+}
