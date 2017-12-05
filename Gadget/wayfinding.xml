@@ -207,6 +207,7 @@
                 populateButtons(STORES);
             }
         }); 
+    }   
 
     gadgets.util.registerOnLoadHandler(onLoad);
 </script>
