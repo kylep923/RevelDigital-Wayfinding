@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <Module> 
 <ModulePrefs title="Wayfinding Gadget" description="" author="Revel Digital" background="transparent">
-  <UserPref name="dataUrl" display_name="URL for json with data grid" datatype="string" default_value="" required="true" />
+  <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
   <UserPref name="cellSize" display_name="Cell size in pixels" datatype="string" default_value=""/>
      
   <!-- The following preferences should not be modified -->
@@ -170,74 +170,44 @@
     }
 
     function readInData() {
-        var addr = prefs.getString("dataUrl");
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", addr, true);
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    var obj = JSON.parse(xhr.responseText);
-                    if (obj) {
-                        DATA = obj;
-
-                        imageURL = DATA.imageInfo;
-
-                        var myCanvas = document.getElementById("myCanvas");
-                        console.log(imageURL);
-                        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
-
-                        originalTileSize = DATA.scaleInfo.tileSize;
-                        originalWidth = DATA.scaleInfo.imgWidth;
-                        originalHeight = DATA.scaleInfo.imgHeight;
-
-                        console.log(originalTileSize);
-                        console.log(originalWidth);
-                        console.log(originalHeight);
-
-                        gridHeight = DATA.height;
-                        gridWidth = DATA.width;
-                    }
-                } else {
-                    console.error(xhr.statusText);
-                }
+        var grid_name = prefs.getString("dataName");
+        firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
+            grid = snapshot.val();
+            var obj = JSON.parse(grid.gridInfo);
+            
+            if (obj) {
+                DATA = obj;
+                imageURL = DATA.imageInfo;
+                var myCanvas = document.getElementById("myCanvas");
+                console.log(imageURL);
+                myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
+                originalTileSize = DATA.scaleInfo.tileSize;
+                originalWidth = DATA.scaleInfo.imgWidth;
+                originalHeight = DATA.scaleInfo.imgHeight;
+                console.log(originalTileSize);
+                console.log(originalWidth);
+                console.log(originalHeight);
+                gridHeight = DATA.height;
+                gridWidth = DATA.width;
             }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        xhr.send(null);
+        });
     }
-
     function readInStores() {
-        var addr = prefs.getString("dataUrl");
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", addr, true);
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    var obj = JSON.parse(xhr.responseText);
-                    if (obj) {
-                        STORES = obj.storeInfo;
-                        console.log(STORES);
-
-                        var index = STORES.map(x => x.name).indexOf('start');
-                        START = STORES[index];
-                        console.log(START);
-
-                        STORES.splice(index, 1);
-
-                        populateButtons(STORES);
-                    }
-                } else {
-                    console.error(xhr.statusText);
-                }
+        var grid_name = prefs.getString("dataName");
+        firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
+            grid = snapshot.val();
+            var obj = JSON.parse(grid.gridInfo);
+            if (obj) {
+                STORES = obj.storeInfo;
+                console.log(STORES);
+                var index = STORES.map(x => x.name).indexOf('start');
+                START = STORES[index];
+                console.log(START);
+                STORES.splice(index, 1);
+                populateButtons(STORES);
             }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        xhr.send(null);
-    }
+        }); 
+
     gadgets.util.registerOnLoadHandler(onLoad);
 </script>
 ]]>
