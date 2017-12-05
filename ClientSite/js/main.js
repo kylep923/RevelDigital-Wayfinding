@@ -119,7 +119,7 @@ get_array.onclick = function() {
         var grid_input_description = document.getElementById('grid_description');
         grid_name = grid_input_name.value;
         grid_description = grid_input_description.value;
-        //check if the 
+        //check if the grid name is in the database
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
             grid = snapshot.val();
             if (!grid) {
