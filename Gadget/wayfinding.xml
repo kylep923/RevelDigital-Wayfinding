@@ -16,6 +16,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/pathfinding-browser.min.js" type="text/javascript"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/paper-core.min.js" type="text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyBGsq1l5bq6wNSynm7ozOjqI-0gSux0fQc",
+        authDomain: "wayfinding-9f0fe.firebaseapp.com",
+        databaseURL: "https://wayfinding-9f0fe.firebaseio.com",
+        projectId: "wayfinding-9f0fe",
+        storageBucket: "",
+        messagingSenderId: "1052785583392"
+    };
+    firebase.initializeApp(config);
+</script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
+
 <style type="text/css">
     body * {
         line-height: 1.2em;
