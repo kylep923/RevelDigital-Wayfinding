@@ -152,7 +152,7 @@
         startPath.strokeColor = 'green';
         startPath.strokeWidth = 15;
         var endPath = new Path();
-        endPath.strokeColor = 'green';
+        endPath.strokeColor = 'red';
         endPath.strokeWidth = 15;
         var path = new Path();
         path.strokeColor = 'red';
