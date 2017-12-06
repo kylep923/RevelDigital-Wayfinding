@@ -102,7 +102,7 @@
     var width = prefs.getString("rdW");
     var height = prefs.getString("rdH");
     var api_key = prefs.getString("apiKey");
-    var showButtons = prefs.getString("showButtons");
+    var showButtons = prefs.getBool("showButtons");
     paper.install(window);
     window.onload = function() {
         paper.setup('myCanvas');
