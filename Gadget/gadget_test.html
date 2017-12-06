@@ -234,7 +234,9 @@
                 START = STORES[index];
                 STORES.splice(index, 1);
                 console.log(showButtons);
-                populateButtons(STORES);
+                if (showButtons == true) {
+                    populateButtons(STORES);
+                }
             }
         });
     }
