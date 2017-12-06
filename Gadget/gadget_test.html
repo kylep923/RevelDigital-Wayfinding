@@ -144,8 +144,7 @@
         startY = data[0][1] * scaleY;
         endX = data[data.length - 1][0] * scaleX;
         endY = data[data.length - 1][1] * scaleY;
-        drawRect(startX, startY, scaleX, scaleY);
-        drawRect(endX, endY, scaleX, scaleY);
+
         // Setting end points to remove when another path is drawn.
         lastStartX = startX;
         lastStartY = startY;
@@ -164,6 +163,8 @@
         }
         path.smooth();
         lastPath = path;
+        drawRect(startX, startY, scaleX, scaleY);
+        drawRect(endX, endY, scaleX, scaleY);
     }
 
     function drawRect(x, y, sizeX, sizeY) {
