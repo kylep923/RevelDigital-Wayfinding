@@ -352,58 +352,60 @@
         document.getElementById("grid_list_container").style.display = "block";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
+        document.getElementById("grids_table").innerHTML = "";
         firebase.database().ref('/' + api_key + '/grids').once('value').then(function(snapshot) {
             // Getting Grid Info From Firebase
-            var keys = Object.keys(snapshot.val());
-            var db = snapshot.val();
-            document.getElementById("grids_table").innerHTML = "";
-            var grids_table = document.getElementById("grids_table");
-            // Create Table Header Row
-            var thr = document.createElement('tr');
-            // Create table headers
-            var th1 = document.createElement('th');
-            var gridhead = document.createTextNode('Grid Name');
-            th1.appendChild(gridhead);
-            var th2 = document.createElement('th');
-            var descriptionhead = document.createTextNode('Grid Description');
-            th2.appendChild(descriptionhead);
-            var th3 = document.createElement('th');
-            var deleteRow = document.createTextNode('');
-            th3.appendChild(deleteRow);
-            // Add Headers to Row
-            thr.appendChild(th1);
-            thr.appendChild(th2);
-            thr.appendChild(th3);
-            // add header row to Table
-            grids_table.appendChild(thr);
-            if (db) {
-                for (key in keys) {
-                    // Row Info
-                    var key = keys[key];
-                    var row = db[key];
-                    //console.log(key);
-                    //console.log(db);
-                    //console.log(row.gridDesc);
-                    var gridInfo = row.gridInfo;
-                    var gridDesc = row.gridDesc;
-                    // Creating Rows and Delete button
-                    var tr = document.createElement('tr');
-                    var td1 = document.createElement('td');
-                    var td2 = document.createElement('td');
-                    var td3 = document.createElement('td');
-                    var delButton = document.createElement('button');
-                    td3.innerHTML = "<button onclick=deleteGridData('" + key + "')>Delete</button>";
-                    // Adding info to rows and delete button
-                    var text1 = document.createTextNode(key);
-                    var text2 = document.createTextNode(gridDesc);
-                    var btnText = document.createTextNode("Delete");
-                    td1.appendChild(text1);
-                    td2.appendChild(text2);
-                    //delButton.appendChild(btnText);
-                    tr.appendChild(td1);
-                    tr.appendChild(td2);
-                    tr.appendChild(td3);
-                    grids_table.appendChild(tr);
+            if (snapshot.val() !== null) {
+                var keys = Object.keys(snapshot.val());
+                var db = snapshot.val();
+                var grids_table = document.getElementById("grids_table");
+                // Create Table Header Row
+                var thr = document.createElement('tr');
+                // Create table headers
+                var th1 = document.createElement('th');
+                var gridhead = document.createTextNode('Grid Name');
+                th1.appendChild(gridhead);
+                var th2 = document.createElement('th');
+                var descriptionhead = document.createTextNode('Grid Description');
+                th2.appendChild(descriptionhead);
+                var th3 = document.createElement('th');
+                var deleteRow = document.createTextNode('');
+                th3.appendChild(deleteRow);
+                // Add Headers to Row
+                thr.appendChild(th1);
+                thr.appendChild(th2);
+                thr.appendChild(th3);
+                // add header row to Table
+                grids_table.appendChild(thr);
+                if (db) {
+                    for (key in keys) {
+                        // Row Info
+                        var key = keys[key];
+                        var row = db[key];
+                        //console.log(key);
+                        //console.log(db);
+                        //console.log(row.gridDesc);
+                        var gridInfo = row.gridInfo;
+                        var gridDesc = row.gridDesc;
+                        // Creating Rows and Delete button
+                        var tr = document.createElement('tr');
+                        var td1 = document.createElement('td');
+                        var td2 = document.createElement('td');
+                        var td3 = document.createElement('td');
+                        var delButton = document.createElement('button');
+                        td3.innerHTML = "<button onclick=deleteGridData('" + key + "')>Delete</button>";
+                        // Adding info to rows and delete button
+                        var text1 = document.createTextNode(key);
+                        var text2 = document.createTextNode(gridDesc);
+                        var btnText = document.createTextNode("Delete");
+                        td1.appendChild(text1);
+                        td2.appendChild(text2);
+                        //delButton.appendChild(btnText);
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        tr.appendChild(td3);
+                        grids_table.appendChild(tr);
+                    }
                 }
             }
         });
