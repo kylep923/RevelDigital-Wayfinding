@@ -3,7 +3,7 @@
 <ModulePrefs title="Wayfinding Gadget" description="" author="Revel Digital" background="transparent">
   <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
   <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value=""/>
-  <UserPref name="showButtons" display_name="Do you want buttons inside the gadget?" datatype="bool" default_value="true"/>
+  <UserPref name="showButtons" display_name="Show Buttons?" datatype="bool" default_value="true"/>
      
   <!-- The following preferences should not be modified -->
   <UserPref name="ForeColor" datatype="hidden" />
