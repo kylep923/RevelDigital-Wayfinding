@@ -113,9 +113,11 @@
     function onLoad() {
         readInData();
         readInStores();
+        console.log("In OnLoad");
     }
 
     function populateButtons(items) {
+        console.log("Creating Buttons");
         items.forEach(function(element) {
             var btn = $("<button class='store-btn'><strong>" + element.name + "</strong></button>");
             btn.click(function() {
@@ -127,6 +129,7 @@
     }
 
     function generatePath(storeName) {
+        console.log("Creating a Path");
         if (lastPath) {
             lastPath.remove();
             clearRect(lastStartX, lastStartY, scaleX, scaleY);
