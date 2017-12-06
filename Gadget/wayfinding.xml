@@ -3,6 +3,7 @@
 <ModulePrefs title="Wayfinding Gadget" description="" author="Revel Digital" background="transparent">
   <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
   <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value=""/>
+  <UserPref name="showButtons" display_name="Do you want buttons inside the gadget?" datatype="boolean" default_value="True"/>
      
   <!-- The following preferences should not be modified -->
   <UserPref name="ForeColor" datatype="hidden" />
@@ -101,6 +102,7 @@
     var width = prefs.getString("rdW");
     var height = prefs.getString("rdH");
     var api_key = prefs.getString("apiKey");
+    var showButtons = prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
         paper.setup('myCanvas');
@@ -245,6 +247,7 @@
                 var index = STORES.map(x => x.name).indexOf('start');
                 START = STORES[index];
                 STORES.splice(index, 1);
+                console.log(showButtons);
                 populateButtons(STORES);
             }
         });
