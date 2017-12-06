@@ -138,31 +138,19 @@
             return;
         }
 
-        console.log(originalTileSize);
-        console.log(originalWidth);
-        console.log(originalHeight);
+        console.log(data[0]);
+        console.log(data[data.length - 1]);
 
         var scaleX = ((width / originalWidth) * originalTileSize);
         var scaleY = ((height / originalHeight) * originalTileSize);
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
 
-        console.log(scaleX);
-        console.log(scaleY);
-
-        console.log(width);
-        console.log(height);
-        console.log("");
-        console.log(document.getElementById('myCanvas').offsetWidth);
-        console.log(document.getElementById('myCanvas').offsetHeight);
-
         var path = new Path();
         path.strokeColor = 'red';
         path.strokeWidth = 5;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
-            console.log(element[0]);
-            console.log(element[1]);
             path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
         path.onFrame = function(event) {
@@ -189,7 +177,7 @@
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
             grid = snapshot.val();
             var obj = JSON.parse(grid.gridInfo);
-            
+
             if (obj) {
                 DATA = obj;
                 imageURL = DATA.imageInfo;
@@ -207,6 +195,7 @@
             }
         });
     }
+
     function readInStores() {
         var grid_name = prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
@@ -221,8 +210,8 @@
                 STORES.splice(index, 1);
                 populateButtons(STORES);
             }
-        }); 
-    }   
+        });
+    }
 
     gadgets.util.registerOnLoadHandler(onLoad);
 </script>
