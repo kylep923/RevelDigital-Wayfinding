@@ -169,7 +169,7 @@
                 console.log(element);
                 endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
-            if (element != data[0] || element != data[1] || element != data[data.length - 1] || element != data[data.length - 2]) {
+            if (element != data[0] && element != data[1] && element && data[data.length - 1] || element && data[data.length - 2]) {
                 //path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
                 console.log("drawing path");
                 console.log(element);
