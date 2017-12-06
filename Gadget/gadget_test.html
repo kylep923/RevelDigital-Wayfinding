@@ -158,13 +158,11 @@
         data.forEach(function(element) {
             if (element == data[0]) {
                 console.log("found first point");
-                path.strokeWidth = 15;
-                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+                drawRect(startX, startY, scaleX, scaleY);
             }
             if (element == data[data.length - 1]) {
                 console.log("found last point");
-                path.strokeWidth = 15;
-                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+                drawRect(endX, endY, scaleX, scaleY);
             } else {
                 path.strokeWidth = 5;
                 path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
@@ -175,8 +173,6 @@
         }
         path.smooth();
         lastPath = path;
-        drawRect(startX, startY, scaleX, scaleY);
-        drawRect(endX, endY, scaleX, scaleY);
     }
 
     function drawRect(x, y, sizeX, sizeY) {
