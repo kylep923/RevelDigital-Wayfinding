@@ -175,11 +175,11 @@
         path.strokeWidth = 5;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
-            if (element == data[0]) {
+            if (element == data[0] || element == data[1]) {
                 console.log("found first point");
                 startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
-            if (element == data[data.length - 1]) {
+            if (element == data[data.length - 1] || element == data[data.length - 2]) {
                 console.log("found last point");
                 endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             } else {
