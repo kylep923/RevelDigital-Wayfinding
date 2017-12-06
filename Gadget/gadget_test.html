@@ -151,6 +151,12 @@
         lastEndX = endX;
         lastEndY = endY;
 
+        var startPath = new Path();
+        startPath.strokeColor = 'green';
+        startPath.strokeWidth = 15;
+        var endPath = new Path();
+        endPath.strokeColor = 'green';
+        endPath.strokeWidth = 15;
         var path = new Path();
         path.strokeColor = 'red';
         path.strokeWidth = 5;
@@ -158,11 +164,11 @@
         data.forEach(function(element) {
             if (element == data[0]) {
                 console.log("found first point");
-                drawRect(startX, startY, scaleX, scaleY);
+                startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
             if (element == data[data.length - 1]) {
                 console.log("found last point");
-                drawRect(endX, endY, scaleX, scaleY);
+                endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             } else {
                 path.strokeWidth = 5;
                 path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
@@ -172,6 +178,8 @@
             path.strokeColor.hue += 1;
         }
         path.smooth();
+        startPath.smooth();
+        endPath.smooth();
         lastPath = path;
     }
 
