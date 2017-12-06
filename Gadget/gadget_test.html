@@ -125,13 +125,15 @@
             return;
         }
 
-        console.log(data[0]);
-        console.log(data[data.length - 1]);
-
         var scaleX = ((width / originalWidth) * originalTileSize);
         var scaleY = ((height / originalHeight) * originalTileSize);
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
+
+        console.log("StartX: " + data[0][0] * scaleX);
+        console.log("StartY: " + data[0][1] * scaleY);
+        console.log("EndX: " + data[data.length - 1][0] * scaleX);
+        console.log("EndY: " + data[data.length - 1][1] * scaleY);
 
         var path = new Path();
         path.strokeColor = 'red';
@@ -169,14 +171,10 @@
                 DATA = obj;
                 imageURL = DATA.imageInfo;
                 var myCanvas = document.getElementById("myCanvas");
-                console.log(imageURL);
                 myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
                 originalTileSize = DATA.scaleInfo.tileSize;
                 originalWidth = DATA.scaleInfo.imgWidth;
                 originalHeight = DATA.scaleInfo.imgHeight;
-                console.log(originalTileSize);
-                console.log(originalWidth);
-                console.log(originalHeight);
                 gridHeight = DATA.height;
                 gridWidth = DATA.width;
             }
@@ -190,10 +188,8 @@
             var obj = JSON.parse(grid.gridInfo);
             if (obj) {
                 STORES = obj.storeInfo;
-                console.log(STORES);
                 var index = STORES.map(x => x.name).indexOf('start');
                 START = STORES[index];
-                console.log(START);
                 STORES.splice(index, 1);
                 populateButtons(STORES);
             }
