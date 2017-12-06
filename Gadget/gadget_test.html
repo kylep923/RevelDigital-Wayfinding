@@ -75,12 +75,8 @@
     var gridWidth = 0;
     var lastPath;
 
-    var lastStartX;
-    var lastStartY;
-    var lastEndX;
-    var lastEndY;
-    var scaleX;
-    var scaleY;
+    var lastStartPath;
+    var lastEndPath;
 
     var originalTileSize = 0;
     var originalWidth = 0;
@@ -116,8 +112,8 @@
     function generatePath(storeName) {
         if (lastPath) {
             lastPath.remove();
-            clearRect(lastStartX, lastStartY, scaleX, scaleY);
-            clearRect(lastEndX, lastEndY, scaleX, scaleY);
+            lastStartPath.remove();
+            lastEndPath.remove();
         }
         var counter = 0;
 
@@ -139,18 +135,6 @@
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
 
-        // Start and End points for drawing icons.
-        startX = data[0][0] * scaleX;
-        startY = data[0][1] * scaleY;
-        endX = data[data.length - 1][0] * scaleX;
-        endY = data[data.length - 1][1] * scaleY;
-
-        // Setting end points to remove when another path is drawn.
-        lastStartX = startX;
-        lastStartY = startY;
-        lastEndX = endX;
-        lastEndY = endY;
-
         var startPath = new Path();
         startPath.strokeColor = 'green';
         startPath.strokeWidth = 15;
@@ -169,10 +153,8 @@
             if (element == data[data.length - 1] || element == data[data.length - 2]) {
                 console.log("found last point");
                 endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
-            } else {
-                path.strokeWidth = 5;
-                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
+            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
         path.onFrame = function(event) {
             path.strokeColor.hue += 1;
@@ -181,6 +163,8 @@
         startPath.smooth();
         endPath.smooth();
         lastPath = path;
+        lastStartPath = startPath;
+        lastEndPath = endPath;
     }
 
     function drawRect(x, y, sizeX, sizeY) {
