@@ -158,11 +158,17 @@
         data.forEach(function(element) {
             if (element == data[0]) {
                 console.log("found first point");
+                path.strokeWidth = 15;
+                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
             if (element == data[data.length - 1]) {
                 console.log("found last point");
+                path.strokeWidth = 15;
+                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            } else {
+                path.strokeWidth = 5;
+                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
-            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
         path.onFrame = function(event) {
             path.strokeColor.hue += 1;
