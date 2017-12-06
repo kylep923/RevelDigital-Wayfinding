@@ -152,29 +152,23 @@
 
         var startPath = new Path();
         startPath.strokeColor = 'green';
-        startPath.strokeWidth = 15;
+        startPath.strokeWidth = originalTileSize;
         var endPath = new Path();
         endPath.strokeColor = 'red';
-        endPath.strokeWidth = 15;
+        endPath.strokeWidth = originalTileSize;
         var path = new Path();
         path.strokeColor = 'red';
-        path.strokeWidth = 5;
+        path.strokeWidth = 3;
         path.dashArray = [10, 5];
-       data.forEach(function(element) {
+        data.forEach(function(element) {
             if (element == data[0] || element == data[1]) {
-                console.log("found first point");
-                console.log(element);
                 startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
             if (element == data[data.length - 1] || element == data[data.length - 2]) {
-                console.log("found last point");
-                console.log(element);
                 endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
-            if (element != data[0] && element != data[data.length - 1]) {
+            if (element != data[0] && element != data[1] && element != data[data.length - 1] && element != data[data.length - 2]) {
                 path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
-                console.log("drawing path");
-                console.log(element);
             }
         }, this);
         path.onFrame = function(event) {
