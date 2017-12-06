@@ -75,6 +75,13 @@
     var gridWidth = 0;
     var lastPath;
 
+    var lastStartX;
+    var lastStartY;
+    var lastEndX;
+    var lastEndY;
+    var scaleX;
+    var scaleY;
+
     var originalTileSize = 0;
     var originalWidth = 0;
     var originalHeight = 0;
@@ -109,6 +116,8 @@
     function generatePath(storeName) {
         if (lastPath) {
             lastPath.remove();
+            clearRect(lastStartX, lastStartY, scaleX, scaleY);
+            clearRect(lastEndX, lastEndY, scaleX, scaleY);
         }
         var counter = 0;
 
@@ -125,15 +134,23 @@
             return;
         }
 
-        var scaleX = ((width / originalWidth) * originalTileSize);
-        var scaleY = ((height / originalHeight) * originalTileSize);
+        scaleX = ((width / originalWidth) * originalTileSize);
+        scaleY = ((height / originalHeight) * originalTileSize);
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
 
-        console.log("StartX: " + data[0][0] * scaleX);
-        console.log("StartY: " + data[0][1] * scaleY);
-        console.log("EndX: " + data[data.length - 1][0] * scaleX);
-        console.log("EndY: " + data[data.length - 1][1] * scaleY);
+        // Start and End points for drawing icons.
+        startX = data[0][0] * scaleX;
+        startY = data[0][1] * scaleY;
+        endX = data[data.length - 1][0] * scaleX;
+        endY = data[data.length - 1][1] * scaleY;
+        drawRect(startX, startY, scaleX, scaleY);
+        drawRect(endX, endY, scaleX, scaleY);
+        // Setting end points to remove when another path is drawn.
+        lastStartX = startX;
+        lastStartY = startY;
+        lastEndX = endX;
+        lastEndY = endY;
 
         var path = new Path();
         path.strokeColor = 'red';
@@ -147,6 +164,23 @@
         }
         path.smooth();
         lastPath = path;
+    }
+
+    function drawRect(x, y, sizeX, sizeY) {
+        var canvas = document.getElementById('myCanvas');
+        if (canvas.getContext) {
+            var ctx = canvas.getContext('2d');
+            ctx.rect(x, y, sizeX, sizeY);
+            ctx.fillStyle = "green";
+        }
+    }
+
+    function clearRect(x, y, sizeX, sizeY) {
+        var canvas = document.getElementById('myCanvas');
+        if (canvas.getContext) {
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(x, y, sizeX, sizeY);
+        }
     }
 
     function getPath(toX, toY) {
