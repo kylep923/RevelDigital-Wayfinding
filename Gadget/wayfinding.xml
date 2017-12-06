@@ -13,6 +13,7 @@
 </ModulePrefs>
 <Content type="html">
 <![CDATA[
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/pathfinding-browser.min.js" type="text/javascript"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/paper-core.min.js" type="text/javascript"></script>
@@ -169,6 +170,12 @@
         path.strokeWidth = 5;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
+            if (element == data[0]) {
+                console.log("found first point");
+            }
+            if (element == data[data.length - 1]) {
+                console.log("found last point");
+            }
             path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
         path.onFrame = function(event) {

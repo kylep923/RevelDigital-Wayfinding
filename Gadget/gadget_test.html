@@ -156,6 +156,12 @@
         path.strokeWidth = 5;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
+            if (element == data[0]) {
+                console.log("found first point");
+            }
+            if (element == data[data.length - 1]) {
+                console.log("found last point");
+            }
             path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
         path.onFrame = function(event) {
