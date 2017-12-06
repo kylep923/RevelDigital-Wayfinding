@@ -113,11 +113,9 @@
     function onLoad() {
         readInData();
         readInStores();
-        console.log("In OnLoad");
     }
 
     function populateButtons(items) {
-        console.log("Creating Buttons");
         items.forEach(function(element) {
             var btn = $("<button class='store-btn'><strong>" + element.name + "</strong></button>");
             btn.click(function() {
@@ -129,7 +127,6 @@
     }
 
     function generatePath(storeName) {
-        console.log("Creating a Path");
         if (lastPath) {
             lastPath.remove();
             clearRect(lastStartX, lastStartY, scaleX, scaleY);
@@ -160,8 +157,7 @@
         startY = data[0][1] * scaleY;
         endX = data[data.length - 1][0] * scaleX;
         endY = data[data.length - 1][1] * scaleY;
-        drawRect(startX, startY, scaleX, scaleY);
-        drawRect(endX, endY, scaleX, scaleY);
+
         // Setting end points to remove when another path is drawn.
         lastStartX = startX;
         lastStartY = startY;
@@ -180,6 +176,8 @@
         }
         path.smooth();
         lastPath = path;
+        drawRect(startX, startY, scaleX, scaleY);
+        drawRect(endX, endY, scaleX, scaleY);
     }
 
     function drawRect(x, y, sizeX, sizeY) {
