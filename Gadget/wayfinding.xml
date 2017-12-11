@@ -33,6 +33,17 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
 <style type="text/css">
+    .visuallyhidden {
+        border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+
     body * {
         line-height: 1.2em;
         letter-spacing: 0;
@@ -77,6 +88,8 @@
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
+            <img id="start" class="visuallyhidden" src="images/start24.png" width="24" height="24">
+            <img id="end" class="visuallyhidden" src="images/end24.png" width="24" height="24">
         </div>
 </body>
 
