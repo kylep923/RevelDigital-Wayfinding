@@ -88,8 +88,8 @@
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
-            <img id="start" class="visuallyhidden" src="images/start24.png" width="24" height="24">
-            <img id="end" class="visuallyhidden" src="images/end24.png" width="24" height="24">
+            <img id="start" class="visuallyhidden" src="" width="24" height="24">
+            <img id="end" class="visuallyhidden" src="" width="24" height="24">
         </div>
 </body>
 
