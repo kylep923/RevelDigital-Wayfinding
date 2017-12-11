@@ -74,8 +74,8 @@
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
-            <img id="start" class="visuallyhidden" src="images/start24.png" width="24" height="24">
-            <img id="end" class="visuallyhidden" src="images/end24.png" width="24" height="24">
+            <img id="start" class="visuallyhidden" src="" width="24" height="24">
+            <img id="end" class="visuallyhidden" src="" width="24" height="24">
         </div>
 </body>
 
@@ -97,6 +97,8 @@
     var originalHeight = 0;
 
     var imageURL;
+    var startIconURL;
+    var endIconURL;
 
     //var prefs = new gadgets.Prefs();
     var width = $(window).width(); //prefs.getString("rdW");
@@ -112,6 +114,17 @@
     function onLoad() {
         readInData();
         readInStores();
+        loadImage("https://uploads.cdn.reveldigital.com/378782!start24.png", "start");
+        loadImage("https://uploads.cdn.reveldigital.com/378781!end24.png", "end");
+    }
+
+    function loadImage(imgURL, imgID) {
+        var image = document.getElementById(imgID);
+        var downloadingimage = new Image();
+        downloadingimage.onload = function() {
+            image.src = this.src;
+        }
+        downloadingimage.src = imgURL;
     }
 
     function populateButtons(items) {

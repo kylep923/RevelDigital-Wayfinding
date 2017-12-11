@@ -123,6 +123,17 @@
     function onLoad() {
         readInData();
         readInStores();
+        loadImage("https://uploads.cdn.reveldigital.com/378782!start24.png", "start");
+        loadImage("https://uploads.cdn.reveldigital.com/378781!end24.png", "end");
+    }
+
+    function loadImage(imgURL, imgID) {
+        var image = document.getElementById(imgID);
+        var downloadingimage = new Image();
+        downloadingimage.onload = function() {
+            image.src = this.src;
+        }
+        downloadingimage.src = imgURL;
     }
 
     function populateButtons(items) {
