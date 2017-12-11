@@ -89,8 +89,7 @@
     var gridWidth = 0;
     var lastPath;
 
-    var lastStartPath;
-    var lastEndPath;
+    var lastEndIcon;
 
     var originalTileSize = 0;
     var originalWidth = 0;
@@ -127,8 +126,7 @@
     function generatePath(storeName) {
         if (lastPath) {
             lastPath.remove();
-            lastStartPath.remove();
-            lastEndPath.remove();
+            lastEndIcon.remove();
         }
         var counter = 0;
 
@@ -150,53 +148,41 @@
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
 
-        var startPath = new Path();
-        startPath.strokeColor = 'green';
-        startPath.strokeWidth = originalTileSize;
-        var endPath = new Path();
-        endPath.strokeColor = 'red';
-        endPath.strokeWidth = originalTileSize;
+
+        var startX;
+        var startY;
+        var endX;
+        var endY;
+
         var path = new Path();
         path.strokeColor = 'red';
         path.strokeWidth = 3;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
-            if (element == data[0] || element == data[1]) {
-                startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            if (element == data[0]) {
+                startPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
             }
-            if (element == data[data.length - 1] || element == data[data.length - 2]) {
-                endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
-            }
-            if (element != data[0] && element != data[1] && element != data[data.length - 1] && element != data[data.length - 2]) {
-                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+           
+            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+
+            if (element == data[data.length - 1]) {
+                endPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
             }
         }, this);
         path.onFrame = function(event) {
             path.strokeColor.hue += 1;
         }
         path.smooth();
-        startPath.smooth();
-        endPath.smooth();
         lastPath = path;
-        lastStartPath = startPath;
-        lastEndPath = endPath;
+        drawStartEnd(startPoint, endPoint);
     }
 
-    function drawRect(x, y, sizeX, sizeY) {
-        var canvas = document.getElementById('myCanvas');
-        if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
-            ctx.rect(x, y, sizeX, sizeY);
-            ctx.fillStyle = "green";
-        }
-    }
-
-    function clearRect(x, y, sizeX, sizeY) {
-        var canvas = document.getElementById('myCanvas');
-        if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
-            ctx.clearRect(x, y, sizeX, sizeY);
-        }
+    function drawStartEnd(sp, ep) {
+        var start = new Raster("start");
+        start.position = sp;
+        var end = new Raster("end");
+        end.position = ep;
+        lastEndIcon = end;
     }
 
     function getPath(toX, toY) {

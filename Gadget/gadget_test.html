@@ -19,6 +19,17 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
 <style type="text/css">
+    .visuallyhidden {
+        border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+    
     body * {
         line-height: 1.2em;
         letter-spacing: 0;
@@ -63,6 +74,8 @@
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
+            <img id="start" class="visuallyhidden" src="images/start24.png" width="24" height="24">
+            <img id="end" class="visuallyhidden" src="images/end24.png" width="24" height="24">
         </div>
 </body>
 
@@ -75,8 +88,9 @@
     var gridWidth = 0;
     var lastPath;
 
-    var lastStartPath;
-    var lastEndPath;
+    //var lastStartPath;
+    //var lastEndPath;
+    var lastEndIcon;
 
     var originalTileSize = 0;
     var originalWidth = 0;
@@ -84,14 +98,15 @@
 
     var imageURL;
 
-    var prefs = new gadgets.Prefs();
-    var width = prefs.getString("rdW");
-    var height = prefs.getString("rdH");
-    var api_key = prefs.getString("apiKey");
-    var showButtons = prefs.getString("showButtons");
+    //var prefs = new gadgets.Prefs();
+    var width = $(window).width(); //prefs.getString("rdW");
+    var height = $(window).height(); //prefs.getString("rdH");
+    var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
+    var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
         paper.setup('myCanvas');
+        onLoad();
     };
     // This function is called after the gadget has been initialized.
     function onLoad() {
@@ -113,8 +128,9 @@
     function generatePath(storeName) {
         if (lastPath) {
             lastPath.remove();
-            lastStartPath.remove();
-            lastEndPath.remove();
+            //lastStartPath.remove();
+            //lastEndPath.remove();
+            lastEndIcon.remove();
         }
         var counter = 0;
 
@@ -136,53 +152,57 @@
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
 
-        var startPath = new Path();
-        startPath.strokeColor = 'green';
-        startPath.strokeWidth = originalTileSize;
-        var endPath = new Path();
-        endPath.strokeColor = 'red';
-        endPath.strokeWidth = originalTileSize;
+        var startX;
+        var startY;
+        var endX;
+        var endY;
+        //var startPath = new Path();
+        //startPath.strokeColor = 'green';
+        //startPath.strokeWidth = originalTileSize;
+        //var endPath = new Path();
+        //endPath.strokeColor = 'red';
+        //endPath.strokeWidth = originalTileSize;
         var path = new Path();
         path.strokeColor = 'red';
         path.strokeWidth = 3;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
+            if (element == data[0]) {
+                startPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
+            }
+            /*
             if (element == data[0] || element == data[1]) {
                 startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
             if (element == data[data.length - 1] || element == data[data.length - 2]) {
                 endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
             }
-            if (element != data[0] && element != data[1] && element != data[data.length - 1] && element != data[data.length - 2]) {
-                path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            */
+            //if (element != data[0] && element != data[1] && element != data[data.length - 1] && element != data[data.length - 2]) {
+            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            // }
+            if (element == data[data.length - 1]) {
+                endPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
             }
         }, this);
         path.onFrame = function(event) {
             path.strokeColor.hue += 1;
         }
         path.smooth();
-        startPath.smooth();
-        endPath.smooth();
+        //startPath.smooth();
+        //endPath.smooth();
         lastPath = path;
-        lastStartPath = startPath;
-        lastEndPath = endPath;
+        //lastStartPath = startPath;
+        //lastEndPath = endPath;
+        drawStartEnd(startPoint, endPoint);
     }
 
-    function drawRect(x, y, sizeX, sizeY) {
-        var canvas = document.getElementById('myCanvas');
-        if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
-            ctx.rect(x, y, sizeX, sizeY);
-            ctx.fillStyle = "green";
-        }
-    }
-
-    function clearRect(x, y, sizeX, sizeY) {
-        var canvas = document.getElementById('myCanvas');
-        if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
-            ctx.clearRect(x, y, sizeX, sizeY);
-        }
+    function drawStartEnd(sp, ep) {
+        var start = new Raster("start");
+        start.position = sp;
+        var end = new Raster("end");
+        end.position = ep;
+        lastEndIcon = end;
     }
 
     function getPath(toX, toY) {
@@ -198,7 +218,7 @@
     }
 
     function readInData() {
-        var grid_name = prefs.getString("dataName");
+        var grid_name = "WestAcersTest3"; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
             grid = snapshot.val();
             var obj = JSON.parse(grid.gridInfo);
@@ -218,7 +238,7 @@
     }
 
     function readInStores() {
-        var grid_name = prefs.getString("dataName");
+        var grid_name = "WestAcersTest3"; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
             grid = snapshot.val();
             var obj = JSON.parse(grid.gridInfo);
@@ -235,7 +255,7 @@
         });
     }
 
-    gadgets.util.registerOnLoadHandler(onLoad);
+    //gadgets.util.registerOnLoadHandler(onLoad);
 </script>
 
 </html>

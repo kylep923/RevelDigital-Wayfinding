@@ -209,20 +209,6 @@
             <button class="button" id="get_array">Finish Creating Grid</button>
         </div>
 
-        <!-- The Modal -->
-        <div id="myModal" class="modal">
-
-            <!-- Modal content -->
-            <div class="modal-content">
-                <h4>Enter a name for your grid.</h4>
-                <input type="text" id="grid_name"><br/>
-                <h4>Enter a description for your grid.</h4>
-                <input type="text" id="grid_description"><br/>
-                <input type="submit" class="button" value="Add" id="add_name"><br/>
-            </div>
-
-        </div>
-
         <!-- #algorithm_panel -->
         <div id="play_panel" class="panel right_panel">
             <button id="button1" class="control_button">Start Search</button>
@@ -241,6 +227,20 @@
         <script type="text/javascript" src="./js/view.js"></script>
         <script type="text/javascript" src="./js/controller.js"></script>
         <script type="text/javascript" src="./js/panel.js"></script>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <h4>Enter a name for your grid.</h4>
+                <input type="text" id="grid_name"><br/>
+                <h4>Enter a description for your grid.</h4>
+                <input type="text" id="grid_description"><br/>
+                <input type="submit" class="button" value="Add" id="add_name"><br/>
+            </div>
+
+        </div>
 
         <img id="drawImage" style="visibility: hidden;">
     </div>
@@ -349,7 +349,7 @@
     // JS code for page 2
     //-------------------------------------------------------------------------------------
     function loadListPage() {
-        document.getElementById("grid_list_container").style.display = "block";
+        document.getElementById("grid_list_container").style.display = "inline";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
         document.getElementById("grids_table").innerHTML = "";
