@@ -132,6 +132,8 @@ get_array.onclick = function() {
                 gridArray["imageInfo"] = input.value;
                 var jsonGrid = JSON.stringify(gridArray);
                 writeGridData(grid_name, jsonGrid, grid_description);
+                loadListPage();
+                alert("Grid " + grid_name + " Added Sccussfully");
             } else {
                 alert("Error: That name already exits!");
             }

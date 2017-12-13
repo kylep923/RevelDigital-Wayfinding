@@ -3,7 +3,33 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/pathfinding-browser.min.js" type="text/javascript"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/paper-core.min.js" type="text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyBGsq1l5bq6wNSynm7ozOjqI-0gSux0fQc",
+        authDomain: "wayfinding-9f0fe.firebaseapp.com",
+        databaseURL: "https://wayfinding-9f0fe.firebaseio.com",
+        projectId: "wayfinding-9f0fe",
+        storageBucket: "",
+        messagingSenderId: "1052785583392"
+    };
+    firebase.initializeApp(config);
+</script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
+
 <style type="text/css">
+    .visuallyhidden {
+        border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+    
     body * {
         line-height: 1.2em;
         letter-spacing: 0;
@@ -48,6 +74,8 @@
         <canvas id="myCanvas" resize="true"></canvas>
         </div?>
         <div id="btnContainer">
+            <img id="start" class="visuallyhidden" src="" width="24" height="24">
+            <img id="end" class="visuallyhidden" src="" width="24" height="24">
         </div>
 </body>
 
@@ -60,23 +88,43 @@
     var gridWidth = 0;
     var lastPath;
 
+    //var lastStartPath;
+    //var lastEndPath;
+    var lastEndIcon;
+
     var originalTileSize = 0;
     var originalWidth = 0;
     var originalHeight = 0;
 
     var imageURL;
+    var startIconURL;
+    var endIconURL;
 
-    var prefs = new gadgets.Prefs();
-    var width = prefs.getString("rdW");
-    var height = prefs.getString("rdH");
+    //var prefs = new gadgets.Prefs();
+    var width = $(window).width(); //prefs.getString("rdW");
+    var height = $(window).height(); //prefs.getString("rdH");
+    var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
+    var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
         paper.setup('myCanvas');
+        onLoad();
     };
     // This function is called after the gadget has been initialized.
     function onLoad() {
         readInData();
         readInStores();
+        loadImage("https://uploads.cdn.reveldigital.com/378782!start24.png", "start");
+        loadImage("https://uploads.cdn.reveldigital.com/378781!end24.png", "end");
+    }
+
+    function loadImage(imgURL, imgID) {
+        var image = document.getElementById(imgID);
+        var downloadingimage = new Image();
+        downloadingimage.onload = function() {
+            image.src = this.src;
+        }
+        downloadingimage.src = imgURL;
     }
 
     function populateButtons(items) {
@@ -93,6 +141,9 @@
     function generatePath(storeName) {
         if (lastPath) {
             lastPath.remove();
+            //lastStartPath.remove();
+            //lastEndPath.remove();
+            lastEndIcon.remove();
         }
         var counter = 0;
 
@@ -108,40 +159,63 @@
         if (!data[0]) {
             return;
         }
-        var cellSize = prefs.getString("cellSize");
 
-        console.log(originalTileSize);
-        console.log(originalWidth);
-        console.log(originalHeight);
-
-        var scaleX = ((width / originalWidth) * originalTileSize);
-        var scaleY = ((height / originalHeight) * originalTileSize);
+        scaleX = ((width / originalWidth) * originalTileSize);
+        scaleY = ((height / originalHeight) * originalTileSize);
         var adjX = Math.round(scaleX / 2);
         var adjY = Math.round(scaleY / 2);
 
-        console.log(scaleX);
-        console.log(scaleY);
-
-        console.log(width);
-        console.log(height);
-        console.log("");
-        console.log(document.getElementById('myCanvas').offsetWidth);
-        console.log(document.getElementById('myCanvas').offsetHeight);
-
+        var startX;
+        var startY;
+        var endX;
+        var endY;
+        //var startPath = new Path();
+        //startPath.strokeColor = 'green';
+        //startPath.strokeWidth = originalTileSize;
+        //var endPath = new Path();
+        //endPath.strokeColor = 'red';
+        //endPath.strokeWidth = originalTileSize;
         var path = new Path();
         path.strokeColor = 'red';
-        path.strokeWidth = 5;
+        path.strokeWidth = 3;
         path.dashArray = [10, 5];
         data.forEach(function(element) {
-            console.log(element[0]);
-            console.log(element[1]);
+            if (element == data[0]) {
+                startPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
+            }
+            /*
+            if (element == data[0] || element == data[1]) {
+                startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            }
+            if (element == data[data.length - 1] || element == data[data.length - 2]) {
+                endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            }
+            */
+            //if (element != data[0] && element != data[1] && element != data[data.length - 1] && element != data[data.length - 2]) {
             path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            // }
+            if (element == data[data.length - 1]) {
+                endPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
+            }
         }, this);
         path.onFrame = function(event) {
             path.strokeColor.hue += 1;
         }
         path.smooth();
+        //startPath.smooth();
+        //endPath.smooth();
         lastPath = path;
+        //lastStartPath = startPath;
+        //lastEndPath = endPath;
+        drawStartEnd(startPoint, endPoint);
+    }
+
+    function drawStartEnd(sp, ep) {
+        var start = new Raster("start");
+        start.position = sp;
+        var end = new Raster("end");
+        end.position = ep;
+        lastEndIcon = end;
     }
 
     function getPath(toX, toY) {
@@ -157,75 +231,44 @@
     }
 
     function readInData() {
-        var addr = prefs.getString("dataUrl");
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", addr, true);
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    var obj = JSON.parse(xhr.responseText);
-                    if (obj) {
-                        DATA = obj;
+        var grid_name = "WestAcersTest3"; //prefs.getString("dataName");
+        firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
+            grid = snapshot.val();
+            var obj = JSON.parse(grid.gridInfo);
 
-                        imageURL = DATA.imageInfo;
-
-                        var myCanvas = document.getElementById("myCanvas");
-                        console.log(imageURL);
-                        myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
-
-                        originalTileSize = DATA.scaleInfo.tileSize;
-                        originalWidth = DATA.scaleInfo.imgWidth;
-                        originalHeight = DATA.scaleInfo.imgHeight;
-
-                        console.log(originalTileSize);
-                        console.log(originalWidth);
-                        console.log(originalHeight);
-
-                        gridHeight = DATA.height;
-                        gridWidth = DATA.width;
-                    }
-                } else {
-                    console.error(xhr.statusText);
-                }
+            if (obj) {
+                DATA = obj;
+                imageURL = DATA.imageInfo;
+                var myCanvas = document.getElementById("myCanvas");
+                myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
+                originalTileSize = DATA.scaleInfo.tileSize;
+                originalWidth = DATA.scaleInfo.imgWidth;
+                originalHeight = DATA.scaleInfo.imgHeight;
+                gridHeight = DATA.height;
+                gridWidth = DATA.width;
             }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        xhr.send(null);
+        });
     }
 
     function readInStores() {
-        var addr = prefs.getString("dataUrl");
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", addr, true);
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    var obj = JSON.parse(xhr.responseText);
-                    if (obj) {
-                        STORES = obj.storeInfo;
-                        console.log(STORES);
-
-                        var index = STORES.map(x => x.name).indexOf('start');
-                        START = STORES[index];
-                        console.log(START);
-
-                        STORES.splice(index, 1);
-
-                        populateButtons(STORES);
-                    }
-                } else {
-                    console.error(xhr.statusText);
+        var grid_name = "WestAcersTest3"; //prefs.getString("dataName");
+        firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
+            grid = snapshot.val();
+            var obj = JSON.parse(grid.gridInfo);
+            if (obj) {
+                STORES = obj.storeInfo;
+                var index = STORES.map(x => x.name).indexOf('start');
+                START = STORES[index];
+                STORES.splice(index, 1);
+                console.log(showButtons);
+                if (showButtons == true) {
+                    populateButtons(STORES);
                 }
             }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        xhr.send(null);
+        });
     }
-    gadgets.util.registerOnLoadHandler(onLoad);
+
+    //gadgets.util.registerOnLoadHandler(onLoad);
 </script>
 
 </html>

@@ -39,11 +39,40 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
     <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px;
+            overflow: hidden;
+            background-color: #333;
+        }
+        
+        li {
+            float: left;
+        }
+        
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        li a:hover {
+            background-color: #111;
+        }
+        
+        .active {
+            background-color: #4CAF50;
+        }
+        
         #new_grid_btn {
             float: right;
         }
         
         table {
+            padding: 10px;
             font-family: arial, sans-serif;
             border-collapse: collapse;
             width: 100%;
@@ -51,7 +80,7 @@
         
         td,
         th {
-            border: 1px solid #dddddd;
+            border: 1px solid #979696;
             text-align: left;
             padding: 8px;
         }
@@ -153,9 +182,16 @@
         </div>
     </div>
 
-    <div id="grid_list_container" class="container">
+    <div id="grid_list_container">
         <div>
-            <h2 id="account_header"></h2>
+            <div>
+                <ul>
+                    <li>
+                        <a id="account_header"></a>
+                    </li>
+                    <li style="float:right"><a class="active" id="logout_btn">Logout</a></li>
+                </ul>
+            </div>
             <table id="grids_table"></table>
             <button id="new_grid_btn">Add New</button>
         </div>
@@ -173,6 +209,25 @@
             <button class="button" id="get_array">Finish Creating Grid</button>
         </div>
 
+        <!-- #algorithm_panel -->
+        <div id="play_panel" class="panel right_panel">
+            <button id="button1" class="control_button">Start Search</button>
+            <button id="button2" class="control_button">Pause Search</button>
+            <button id="button3" class="control_button">Clear Walls</button>
+        </div>
+
+        <div id="store_panel" class="panel right_panel">
+            <h3>Add Store Location</h3>
+            <button id="addStore" class="store_button">ADD</button>
+            <button id="back_btn" class="store_button">Back To Grid List</button>
+        </div>
+        <div id="stats"></div>
+
+        <script type="text/javascript" src="./js/main.js"></script>
+        <script type="text/javascript" src="./js/view.js"></script>
+        <script type="text/javascript" src="./js/controller.js"></script>
+        <script type="text/javascript" src="./js/panel.js"></script>
+
         <!-- The Modal -->
         <div id="myModal" class="modal">
 
@@ -187,24 +242,6 @@
 
         </div>
 
-        <!-- #algorithm_panel -->
-        <div id="play_panel" class="panel right_panel">
-            <button id="button1" class="control_button">Start Search</button>
-            <button id="button2" class="control_button">Pause Search</button>
-            <button id="button3" class="control_button">Clear Walls</button>
-        </div>
-
-        <div id="store_panel" class="panel right_panel">
-            <h3>Add Store Location</h3>
-            <button id="addStore" class="store_button">ADD</button>
-        </div>
-        <div id="stats"></div>
-
-        <script type="text/javascript" src="./js/main.js"></script>
-        <script type="text/javascript" src="./js/view.js"></script>
-        <script type="text/javascript" src="./js/controller.js"></script>
-        <script type="text/javascript" src="./js/panel.js"></script>
-
         <img id="drawImage" style="visibility: hidden;">
     </div>
 
@@ -218,6 +255,40 @@
     var revel_account = null;
     var api_key;
 
+    // Checking if user has already logged in and brings them to the list page if they are.
+    if (window.localStorage.getItem("api_key")) {
+        console.log(window.localStorage.getItem("api_key"));
+        api_key = window.localStorage.getItem("api_key");
+        $.ajax({
+            url: "http://api.reveldigital.com/account?api_key=" + api_key,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                revel_account = res;
+                firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
+                    account = snapshot.val();
+                    if (!account) {
+                        firebase.database().ref('/' + api_key).set({
+                            accountName: res.name,
+                            grids: []
+                        });
+                    }
+                });
+                document.getElementById("account_header").innerHTML = res.name;
+                loadListPage();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Error: Invalid API Key.");
+            }
+        });
+    } else {
+        document.getElementById("grid_list_container").style.display = "none";
+        document.getElementById("editor_container").style.display = "none";
+    }
+
+    //window.localStorage.setItem("api_key", api_key);
+    //window.localStorage.getItem("api_key");
+
     function writeGridData(gridName, gridInfo, gridDesc) {
         firebase.database().ref('/' + api_key + '/grids/' + gridName).set({
             gridInfo: gridInfo,
@@ -227,7 +298,6 @@
 
     function deleteGridData(gridName) {
         console.log(gridName);
-        removeListTable();
         var del_obj = firebase.database().ref('/' + api_key + '/grids/' + gridName);
         del_obj.remove().then(function(ref) {
             // data has been deleted locally and in the database
@@ -235,14 +305,6 @@
         }, function(error) {
             console.log("Error:", error);
         });
-    }
-
-    // Hiding Page 2-3 divs
-    if (revel_account == null) {
-        document.getElementById("grid_list_container").style.display = "none";
-        document.getElementById("editor_container").style.display = "none";
-    } else {
-        loadListPage();
     }
 
     //-------------------------------------------------------------------------------------
@@ -256,6 +318,8 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
+                window.localStorage.setItem("api_key", api_key);
+                console.log(window.localStorage.getItem("api_key"));
                 revel_account = res;
                 firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
                     account = snapshot.val();
@@ -288,64 +352,76 @@
         document.getElementById("grid_list_container").style.display = "inline";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
+        document.getElementById("grids_table").innerHTML = "";
         firebase.database().ref('/' + api_key + '/grids').once('value').then(function(snapshot) {
             // Getting Grid Info From Firebase
-            var keys = Object.keys(snapshot.val());
-            var db = snapshot.val();
-            var grids_table = document.getElementById("grids_table");
-            // Create Table Header Row
-            var thr = document.createElement('tr');
-            // Create table headers
-            var th1 = document.createElement('th');
-            var gridhead = document.createTextNode('Grid Name');
-            th1.appendChild(gridhead);
-            var th2 = document.createElement('th');
-            var descriptionhead = document.createTextNode('Grid Description');
-            th2.appendChild(descriptionhead);
-            var th3 = document.createElement('th');
-            var deleteRow = document.createTextNode('');
-            th3.appendChild(deleteRow);
-            // Add Headers to Row
-            thr.appendChild(th1);
-            thr.appendChild(th2);
-            thr.appendChild(th3);
-            // add header row to Table
-            grids_table.appendChild(thr);
-            if (db) {
-                for (key in keys) {
-                    // Row Info
-                    var key = keys[key];
-                    var row = db[key];
-                    //console.log(key);
-                    //console.log(db);
-                    //console.log(row.gridDesc);
-                    var gridInfo = row.gridInfo;
-                    var gridDesc = row.gridDesc;
-                    // Creating Rows and Delete button
-                    var tr = document.createElement('tr');
-                    var td1 = document.createElement('td');
-                    var td2 = document.createElement('td');
-                    var td3 = document.createElement('td');
-                    var delButton = document.createElement('button');
-                    td3.innerHTML = "<button onclick=deleteGridData('" + key + "')>Delete</button>";
-                    // Adding info to rows and delete button
-                    var text1 = document.createTextNode(key);
-                    var text2 = document.createTextNode(gridDesc);
-                    var btnText = document.createTextNode("Delete");
-                    td1.appendChild(text1);
-                    td2.appendChild(text2);
-                    //delButton.appendChild(btnText);
-                    tr.appendChild(td1);
-                    tr.appendChild(td2);
-                    tr.appendChild(td3);
-                    grids_table.appendChild(tr);
+            if (snapshot.val() !== null) {
+                var keys = Object.keys(snapshot.val());
+                var db = snapshot.val();
+                var grids_table = document.getElementById("grids_table");
+                // Create Table Header Row
+                var thr = document.createElement('tr');
+                // Create table headers
+                var th1 = document.createElement('th');
+                var gridhead = document.createTextNode('Grid Name');
+                th1.appendChild(gridhead);
+                var th2 = document.createElement('th');
+                var descriptionhead = document.createTextNode('Grid Description');
+                th2.appendChild(descriptionhead);
+                var th3 = document.createElement('th');
+                var deleteRow = document.createTextNode('');
+                th3.appendChild(deleteRow);
+                // Add Headers to Row
+                thr.appendChild(th1);
+                thr.appendChild(th2);
+                thr.appendChild(th3);
+                // add header row to Table
+                grids_table.appendChild(thr);
+                if (db) {
+                    for (key in keys) {
+                        // Row Info
+                        var key = keys[key];
+                        var row = db[key];
+                        //console.log(key);
+                        //console.log(db);
+                        //console.log(row.gridDesc);
+                        var gridInfo = row.gridInfo;
+                        var gridDesc = row.gridDesc;
+                        // Creating Rows and Delete button
+                        var tr = document.createElement('tr');
+                        var td1 = document.createElement('td');
+                        var td2 = document.createElement('td');
+                        var td3 = document.createElement('td');
+                        var delButton = document.createElement('button');
+                        td3.innerHTML = "<button onclick=deleteGridData('" + key + "')>Delete</button>";
+                        // Adding info to rows and delete button
+                        var text1 = document.createTextNode(key);
+                        var text2 = document.createTextNode(gridDesc);
+                        var btnText = document.createTextNode("Delete");
+                        td1.appendChild(text1);
+                        td2.appendChild(text2);
+                        //delButton.appendChild(btnText);
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        tr.appendChild(td3);
+                        grids_table.appendChild(tr);
+                    }
                 }
             }
         });
     }
 
-    function removeListTable() {
-        document.getElementById("grids_table").innerHTML = "";
+    logout_btn.onclick = function() {
+        window.localStorage.setItem("api_key", "");
+        document.getElementById("grid_list_container").style.display = "none";
+        document.getElementById("login_container").style.display = "inline";
+        document.getElementById("editor_container").style.display = "none";
+    }
+
+    back_btn.onclick = function() {
+        document.getElementById("grid_list_container").style.display = "inline";
+        document.getElementById("login_container").style.display = "none";
+        document.getElementById("editor_container").style.display = "none";
     }
 
     new_grid_btn.onclick = function() {
