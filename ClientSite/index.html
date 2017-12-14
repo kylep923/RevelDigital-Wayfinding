@@ -39,6 +39,19 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
     <style>
+        .floatTL {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            display: block;
+        }
+        
+        img {
+            padding: 0px;
+            margin: 0px;
+            display: block;
+        }
+        
         ul {
             list-style-type: none;
             margin: 0;
@@ -135,6 +148,7 @@
         img.avatar {
             width: 10%;
             border-radius: 50%;
+            display: inline;
         }
         
         .container {
@@ -198,14 +212,14 @@
     </div>
 
     <div id="editor_container">
-        <div id="draw_area" class="grid"></div>
+        <div id="img_area" class="floatTL"></div>
+        <div id="draw_area" class="floatTL"></div>
 
         <div id="algorithm_panel" class="panel right_panel">
-            <h2>Backround Image URL</h2>
-            <input type='text' id='input' required/>
+            <h2>Configure Grid</h2>
             <h3>Tile Size</h3>
             <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
-            <button type="submit" class="button" id="submit">Draw Grid</button>
+            <button type="submit" class="button" id="submit">Redraw Grid</button>
             <button class="button" id="get_array">Finish Creating Grid</button>
         </div>
 
@@ -223,12 +237,29 @@
         </div>
         <div id="stats"></div>
 
+        <!-- Create New Grid Modal -->
+        <div id="createGridModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <h3>Enter Image URL's for each floor.</h3>
+                <input type="text" id="grid_url"><br/>
+                <button class="button" id="add_grid_url">Add</button>
+                <h4>Tile Size</h4>
+                <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
+                <h3>Click Create Grid to load your new grid.</h3>
+                <button class="button" id="create_grid">Create Grid</button>
+
+            </div>
+
+        </div>
+
         <script type="text/javascript" src="./js/main.js"></script>
         <script type="text/javascript" src="./js/view.js"></script>
         <script type="text/javascript" src="./js/controller.js"></script>
         <script type="text/javascript" src="./js/panel.js"></script>
 
-        <!-- The Modal -->
+        <!-- Add New Grid Modal -->
         <div id="myModal" class="modal">
 
             <!-- Modal content -->
@@ -242,7 +273,6 @@
 
         </div>
 
-        <img id="drawImage" style="visibility: hidden;">
     </div>
 
 </body>
@@ -425,6 +455,7 @@
     }
 
     new_grid_btn.onclick = function() {
+        document.getElementById("createGridModal").style.display = "inline";
         document.getElementById("editor_container").style.display = "inline";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("grid_list_container").style.display = "none";

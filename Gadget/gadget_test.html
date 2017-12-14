@@ -19,6 +19,13 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
 <style type="text/css">
+    .floatTL {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        display: block;
+    }
+    
     .visuallyhidden {
         border: 0;
         clip: rect(0 0 0 0);
@@ -71,12 +78,15 @@
 
 <body>
     <div>
-        <canvas id="myCanvas" resize="true"></canvas>
-        </div?>
+        <div id="img_container" class="floatTL"></div>
+        <div id="canvas_container" class="floatTL">
+            <canvas id="myCanvas" resize="true"></canvas>
+        </div>
         <div id="btnContainer">
             <img id="start" class="visuallyhidden" src="" width="24" height="24">
             <img id="end" class="visuallyhidden" src="" width="24" height="24">
         </div>
+    </div>
 </body>
 
 <script type="text/javascript">

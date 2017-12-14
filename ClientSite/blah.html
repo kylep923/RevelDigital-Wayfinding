@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./lib/themes/jquery.ui.all.css" />
+
+    <script type="text/javascript" src="./lib/raphael-min.js"></script>
+    <script type="text/javascript" src="./lib/es5-shim.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="./lib/state-machine.min.js"></script>
+    <script type="text/javascript" src="./lib/async.min.js"></script>
+
+    <script type="text/javascript" src="./lib/ui/jquery.ui.core.min.js"></script>
+    <script type="text/javascript" src="./lib/ui/jquery.ui.widget.min.js"></script>
+    <script type="text/javascript" src="./lib/ui/jquery.ui.mouse.min.js"></script>
+    <script type="text/javascript" src="./lib/ui/jquery.ui.draggable.min.js"></script>
+    <script type="text/javascript" src="./lib/ui/jquery.ui.accordion.min.js"></script>
+    <script type="text/javascript" src="./lib/ui/jquery.ui.slider.min.js"></script>
+    <script type="text/javascript" src="./lib/pathfinding-browser.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+
+    <p>Click the button to create an IMG element.</p>
+    <input type="number" id="tile_size" min="1" max="50" value="10" required>
+    <button onclick="loadGrid()">Try it</button>
+
+    <div id="drawArea"></div>
+
+    <script>
+        var drawArea = document.getElementById("drawArea");
+        var width = 0;
+        var height = 0;
+        var set_Node_Size = 30;
+        var grid_size_x = 64;
+        var grid_size_y = 36;
+        var tile_Size = document.getElementById("tile_size");
+        var imgArray = ["https://uploads.cdn.reveldigital.com/378499!westAcersMap.PNG", "https://uploads.cdn.reveldigital.com/378499!westAcersMap.PNG", "https://uploads.cdn.reveldigital.com/378499!westAcersMap.PNG", "https://uploads.cdn.reveldigital.com/378499!westAcersMap.PNG"];
+
+
+        function loadGrid() {
+
+            for (var x = 0; x < imgArray.length; x++) {
+                console.log(imgArray[x] + " " + x);
+                floorNum = x + 1;
+                createImage("floor" + floorNum);
+                loadImage(imgArray[x], "floor" + floorNum);
+            }
+
+            //drawArea.setAttribute("style", "width:" + width + "px height:" + height + "px;");
+            //console.log(width + " " + height);
+
+        }
+
+        function createImage(imgID) {
+            var image = document.createElement("IMG");
+            image.setAttribute("id", imgID);
+            drawArea.appendChild(image);
+        }
+
+        function loadImage(imgURL, imgID) {
+            var image = document.getElementById(imgID);
+            var downloadingimage = new Image();
+            downloadingimage.onload = function() {
+                image.src = this.src;
+                if (imgID == "floor1") {
+                    width = image.clientWidth;
+                    height = image.clientHeight;
+                    drawArea.width = width;
+                    console.log(width);
+                    console.log(height);
+                } else if (imgID == "floor" + imgArray.length) {
+                    height += image.clientHeight;
+                    drawArea.setAttribute("style", "width:" + width + "px height:" + height + "px;");
+                    console.log(height);
+
+                    imageHeight = height;
+                    imageWidth = width;
+
+                    $("rect").remove();
+                    View.startNode = false;
+                    View.endNode = false;
+                    View.nodeSize = tile_Size.value;
+
+                    console.log(Math.round(imageWidth / parseInt(tile_Size.value)));
+                    console.log(Math.round(imageHeight / parseInt(tile_Size.value)));
+
+                    Controller.gridSize[0] = Math.round(imageWidth / parseInt(tile_Size.value));
+                    Controller.gridSize[1] = Math.round(imageHeight / parseInt(tile_Size.value));
+
+                    var numCols = Controller.gridSize[0],
+                        numRows = Controller.gridSize[1];
+
+                    Controller.grid = new PF.Grid(numCols, numRows);
+
+
+                    View.init({
+                        numCols: Math.round(imageWidth / parseInt(tile_Size.value)),
+                        numRows: Math.round(imageHeight / parseInt(tile_Size.value))
+                    });
+
+                    View.generateGrid(function() {
+                        Controller.setDefaultStartEndPos();
+                        Controller.bindEvents();
+                        //Controller.transition(); // transit to the next state (ready)
+                    });
+
+                    drawArea.setAttribute("style", "width:" + $("svg").width() + "px; height:" + $("svg").height() + "px; background-image: " + 'url("' + input.value + '");background-size: ' + $("svg").width() + 'px ' + $("svg").height() + 'px;');
+
+                    var item = {};
+                    item["imgHeight"] = $("svg").height();
+                    item["imgWidth"] = $("svg").width();
+                    item["tileSize"] = tile_Size.value;
+                    scaleObj = item;
+
+                } else {
+                    height += image.clientHeight;
+                    console.log(height);
+                }
+                image.width = width;
+                image.height = image.clientHeight;
+                //drawArea.appendChild(image);
+
+            }
+            downloadingimage.src = imgURL;
+        }
+    </script>
+
+    <script type="text/javascript" src="./js/view.js"></script>
+    <script type="text/javascript" src="./js/controller.js"></script>
+    <script type="text/javascript" src="./js/panel.js"></script>
+
+</body>
+
+</html>

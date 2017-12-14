@@ -16,6 +16,7 @@ function loadEditor() {
 var input = document.getElementById("input");
 var store = document.getElementById("store");
 var drawArea = document.getElementById("draw_area");
+var imgArea = document.getElementById("img_area");
 var grid_width = document.getElementById("grid_x");
 var grid_height = document.getElementById("grid_y");
 var tile_Size = document.getElementById("tile_size");
@@ -23,90 +24,185 @@ var set_Node_Size = 30;
 var grid_size_x = 64;
 var grid_size_y = 36;
 var storeArray = [];
+var transitionArray = [];
 var enterStoreMode = false;
+var enterTransitionMode = false;
 var scaleObj;
 var grid_name = "";
 var grid_description = "";
-
+var imgArray = [];
+var width = 0;
+var height = 0;
 
 
 
 submit.onclick = function() {
 
     var s = d3.selectAll('svg');
+    var i = d3.selectAll('img');
     s.remove();
-
+    i.remove();
+    width = 0;
+    height = 0;
     enterStoreMode = false;
 
-    //drawArea.style.backgroundImage = 'url("' + input.value + '")';
-
-    var image = document.getElementById("drawImage");
-    var downloadingImage = new Image();
-    downloadingImage.onload = function() {
-        image.src = this.src;
-
-        //image.setAttribute("src", input.value);
-        //while (!image.complete) { console.log(image.complete) }
-        //image.setAttribute("id", "drawImage");
-        image.setAttribute("style", "visibility: hidden;");
-        if (image.complete) {
-            document.body.appendChild(image);
-            var drawImage = document.getElementById("drawImage");
-            var imageHeight = image.clientHeight;
-            var imageWidth = image.clientWidth;
-        }
-
-        //drawArea.setAttribute("style", "width:" + imageWidth + "px; height:" + imageHeight + "px; background-image: " + 'url("' + input.value + '");');
-
-        //console.log(item);
-        //console.log(scaleArray);
-
-        //$("#drawImage").remove();
-        $("rect").remove();
-        View.startNode = false;
-        View.endNode = false;
-        View.nodeSize = tile_Size.value;
-
-        console.log(Math.round(imageWidth / parseInt(tile_Size.value)));
-        console.log(Math.round(imageHeight / parseInt(tile_Size.value)));
-
-        Controller.gridSize[0] = Math.round(imageWidth / parseInt(tile_Size.value));
-        Controller.gridSize[1] = Math.round(imageHeight / parseInt(tile_Size.value));
-
-        var numCols = Controller.gridSize[0],
-            numRows = Controller.gridSize[1];
-
-        Controller.grid = new PF.Grid(numCols, numRows);
-
-
-        View.init({
-            numCols: Math.round(imageWidth / parseInt(tile_Size.value)),
-            numRows: Math.round(imageHeight / parseInt(tile_Size.value))
-        });
-
-        View.generateGrid(function() {
-            Controller.setDefaultStartEndPos();
-            Controller.bindEvents();
-            //Controller.transition(); // transit to the next state (ready)
-        });
-
-        drawArea.setAttribute("style", "width:" + $("svg").width() + "px; height:" + $("svg").height() + "px; background-image: " + 'url("' + input.value + '");background-size: ' + $("svg").width() + 'px ' + $("svg").height() + 'px;');
-
-        var item = {};
-        item["imgHeight"] = $("svg").height();
-        item["imgWidth"] = $("svg").width();
-        item["tileSize"] = tile_Size.value;
-        scaleObj = item;
-    };
-    downloadingImage.src = input.value;
+    loadGrid();
 
 }
+
+
+//------------------------------------------------------------
+// NEW FUNCTIONS HERE
+//------------------------------------------------------------
+function loadGrid() {
+    var x = 0;
+    var y = 0;
+    // Create Image html elements
+    var loopArray = function(arr) {
+        alertWhenDone("Creating Image " + x, function() {
+            x++;
+            floorNum = x;
+            var image = document.createElement("IMG");
+            image.setAttribute("id", "floor" + floorNum);
+            imgArea.appendChild(image);
+            if (x < arr.length) {
+                loopArray(arr);
+            }
+        });
+    }
+    loopArray(imgArray);
+
+    // Populate each image with an image for that floor
+    var loopArray2 = function(arr) {
+        alertWhenDone(y + 1, function() {
+            y++;
+            floorNum = y;
+            var image = document.getElementById("floor" + floorNum);
+            var downloadingimage = new Image();
+            downloadingimage.onload = function() {
+                image.src = this.src;
+
+                width = image.clientWidth;
+                height += image.clientHeight;
+                drawArea.width = width;
+                console.log(width);
+                console.log(height);
+
+                image.width = width;
+                image.height = image.clientHeight;
+                image.display = "block";
+                //drawArea.appendChild(image);
+                if (y < arr.length) {
+                    loopArray2(arr);
+                } else {
+                    drawGrid();
+                }
+            }
+            downloadingimage.src = imgArray[y - 1];
+        });
+    }
+    loopArray2(imgArray);
+
+    //drawArea.setAttribute("style", "width:" + width + "px height:" + height + "px;");
+    //console.log(width + " " + height);
+
+}
+
+function alertWhenDone(msg, callback) {
+    console.log(msg);
+    callback();
+}
+
+function drawGrid() {
+    console.log(height);
+
+    imageHeight = height;
+    imageWidth = width;
+
+    $("rect").remove();
+    View.startNode = false;
+    View.endNode = false;
+    View.nodeSize = tile_Size.value;
+
+    console.log(Math.round(imageWidth / parseInt(tile_Size.value)));
+    console.log(Math.round(imageHeight / parseInt(tile_Size.value)));
+
+    Controller.gridSize[0] = Math.round(imageWidth / parseInt(tile_Size.value));
+    Controller.gridSize[1] = Math.round(imageHeight / parseInt(tile_Size.value));
+
+    var numCols = Controller.gridSize[0],
+        numRows = Controller.gridSize[1];
+
+    Controller.grid = new PF.Grid(numCols, numRows);
+
+
+    View.init({
+        numCols: Math.round(imageWidth / parseInt(tile_Size.value)),
+        numRows: Math.round(imageHeight / parseInt(tile_Size.value))
+    });
+
+    View.generateGrid(function() {
+        Controller.setDefaultStartEndPos();
+        Controller.bindEvents();
+        //Controller.transition(); // transit to the next state (ready)
+    });
+
+    drawArea.setAttribute("style", "width:" + $("svg").width() + "px; height:" + $("svg").height() + "px;");
+    imgArea.setAttribute("style", "width:" + $("svg").width() + "px; height:" + $("svg").height() + "px;");
+
+    for (var x = 0; x < imgArray.length; x++) {
+        floorNum = x + 1;
+        resizeImage("floor" + floorNum, $("svg").height() / imgArray.length, $("svg").width());
+    }
+
+    var item = {};
+    item["imgHeight"] = $("svg").height();
+    item["imgWidth"] = $("svg").width();
+    item["tileSize"] = tile_Size.value;
+    scaleObj = item;
+
+}
+
+function resizeImage(imgID, height, width) {
+    img = document.getElementById(imgID);
+    img.setAttribute("style", "width:" + width + "px; height:" + height + "px;");
+
+}
+//------------------------------------------------------------
+//------------------------------------------------------------
+
 
 addStore.onclick = function() {
     alert("Select coordinates on grid");
     enterStoreMode = true;
 
     console.log(storeArray);
+}
+
+function addTransition() {
+    alert("Select coordinates on grid");
+    enterTransitionMode = true;
+
+    console.log(transitionArray);
+}
+
+add_grid_url.onclick = function() {
+    imgURL = document.getElementById("grid_url");
+    imgArray.push(imgURL.value);
+    $('#grid_url').val('');
+    console.log(imgURL.value);
+    console.log(imgArray);
+}
+
+create_grid.onclick = function() {
+    document.getElementById("createGridModal").style.display = "none";
+
+    var s = d3.selectAll('svg');
+    s.remove();
+
+    enterStoreMode = false;
+
+    loadGrid();
 }
 
 get_array.onclick = function() {
@@ -129,7 +225,8 @@ get_array.onclick = function() {
                 var gridArray = Controller.grid;
                 gridArray["storeInfo"] = storeArray;
                 gridArray["scaleInfo"] = scaleObj;
-                gridArray["imageInfo"] = input.value;
+                gridArray["imageInfo"] = imgArray;
+                gridArray["floorInfo"] = transitionArray;
                 var jsonGrid = JSON.stringify(gridArray);
                 writeGridData(grid_name, jsonGrid, grid_description);
                 loadListPage();
@@ -156,7 +253,20 @@ function getStore(gridX, gridY) {
     }
     Controller.rest();
     return;
+}
 
+function getTransition(gridX, gridY) {
+    if (enterTransitionMode == true) {
+        floorNum = Math.ceil(gridX / (height / imgArray.length));
+        transitionArray.push({
+            Floor: floorNum,
+            x: gridX,
+            y: gridY
+        });
+        enterTransitionMode = false;
+    }
+    Controller.rest();
+    return;
 }
 
 function download(filename, text) {
