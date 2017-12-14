@@ -25,17 +25,22 @@ var grid_size_x = 64;
 var grid_size_y = 36;
 var storeArray = [];
 var transitionArray = [];
+var transitionStartArray = [];
+var transitionEndAray = [];
 var enterStoreMode = false;
 var enterTransitionMode = false;
+var current_floor = 0;
+var start_end = "start";
 var scaleObj;
 var grid_name = "";
 var grid_description = "";
 var imgArray = [];
+var gridArray = [];
 var width = 0;
 var height = 0;
 
 
-
+// Reloading the grid and images. for adjusting tile size
 submit.onclick = function() {
 
     var s = d3.selectAll('svg');
@@ -113,6 +118,13 @@ function alertWhenDone(msg, callback) {
     callback();
 }
 
+function saveFloor(floorName) {
+    var gridItem = {};
+    gridItem["name"] = floorName;
+    gridItem["gridInfo"] = Controller.grid;
+    gridItem["gridImage"] = imageURL;
+}
+
 function drawGrid() {
     console.log(height);
 
@@ -160,7 +172,6 @@ function drawGrid() {
     item["imgWidth"] = $("svg").width();
     item["tileSize"] = tile_Size.value;
     scaleObj = item;
-
 }
 
 function resizeImage(imgID, height, width) {
@@ -172,6 +183,10 @@ function resizeImage(imgID, height, width) {
 //------------------------------------------------------------
 
 
+//------------------------------------------------------------
+// ENTERING STORE AND TRANSITION INFO HERE 
+//------------------------------------------------------------
+
 addStore.onclick = function() {
     alert("Select coordinates on grid");
     enterStoreMode = true;
@@ -179,12 +194,62 @@ addStore.onclick = function() {
     console.log(storeArray);
 }
 
-function addTransition() {
-    alert("Select coordinates on grid");
-    enterTransitionMode = true;
-
-    console.log(transitionArray);
+add_transition_btn.onclick = function() {
+    if (current_floor < imgArray.length) {
+        current_floor++;
+        addTransition(current_floor, start_end);
+    } else {
+        alert("You have already entered transition corridnates for each floor");
+    }
 }
+
+function addTransition(current_floor, start_end) {
+    alert("Select transition " + start_end + " coordinates on grid for floor " + current_floor);
+    enterTransitionMode = true;
+}
+
+
+function getStore(gridX, gridY) {
+    if (enterStoreMode == true) {
+        var name = prompt("Enter store name");
+        floorNum = Math.ceil(gridX / (height / imgArray.length));
+        storeArray.push({
+            x: gridX,
+            y: gridY,
+            floor: floorNum,
+            name: name
+        });
+        enterStoreMode = false;
+    }
+    Controller.rest();
+    return;
+}
+
+function getTransition(gridX, gridY) {
+    if (enterTransitionMode == true) {
+        floorNum = Math.ceil(gridX / (height / imgArray.length));
+        transitionArray.push({
+            floor: current_floor,
+            name: start_end,
+            x: gridX,
+            y: gridY
+        });
+        console.log(transitionArray);
+        if (start_end == "end") {
+            enterTransitionMode = false;
+            start_end = "start";
+        } else {
+            start_end = "end";
+            addTransition(current_floor, start_end);
+        }
+    }
+    Controller.rest();
+    return;
+}
+
+
+//------------------------------------------------------------
+//------------------------------------------------------------
 
 add_grid_url.onclick = function() {
     imgURL = document.getElementById("grid_url");
@@ -224,10 +289,12 @@ get_array.onclick = function() {
 
                 var gridArray = Controller.grid;
                 gridArray["storeInfo"] = storeArray;
+                console.log(storeArray);
                 gridArray["scaleInfo"] = scaleObj;
                 gridArray["imageInfo"] = imgArray;
                 gridArray["floorInfo"] = transitionArray;
                 var jsonGrid = JSON.stringify(gridArray);
+                console.log(jsonGrid);
                 writeGridData(grid_name, jsonGrid, grid_description);
                 loadListPage();
                 alert("Grid " + grid_name + " Added Sccussfully");
@@ -239,34 +306,6 @@ get_array.onclick = function() {
     }
 
     //download("Grid.json", jsonGrid);
-}
-
-function getStore(gridX, gridY) {
-    if (enterStoreMode == true) {
-        var name = prompt("Enter store name");
-        storeArray.push({
-            x: gridX,
-            y: gridY,
-            name: name
-        });
-        enterStoreMode = false;
-    }
-    Controller.rest();
-    return;
-}
-
-function getTransition(gridX, gridY) {
-    if (enterTransitionMode == true) {
-        floorNum = Math.ceil(gridX / (height / imgArray.length));
-        transitionArray.push({
-            Floor: floorNum,
-            x: gridX,
-            y: gridY
-        });
-        enterTransitionMode = false;
-    }
-    Controller.rest();
-    return;
 }
 
 function download(filename, text) {

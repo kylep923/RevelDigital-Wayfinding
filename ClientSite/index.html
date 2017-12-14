@@ -220,6 +220,7 @@
             <h3>Tile Size</h3>
             <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
             <button type="submit" class="button" id="submit">Redraw Grid</button>
+            <button type="submit" class="button" id="add_transition_btn">Add Transition</button>
             <button class="button" id="get_array">Finish Creating Grid</button>
         </div>
 
@@ -315,9 +316,6 @@
         document.getElementById("grid_list_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
     }
-
-    //window.localStorage.setItem("api_key", api_key);
-    //window.localStorage.getItem("api_key");
 
     function writeGridData(gridName, gridInfo, gridDesc) {
         firebase.database().ref('/' + api_key + '/grids/' + gridName).set({

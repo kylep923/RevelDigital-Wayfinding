@@ -79,9 +79,9 @@
 <body>
     <div>
         <div id="img_container" class="floatTL"></div>
-        <div id="canvas_container" class="floatTL">
-            <canvas id="myCanvas" resize="true"></canvas>
-        </div>
+
+        <canvas id="myCanvas" resize="true"></canvas>
+
         <div id="btnContainer">
             <img id="start" class="visuallyhidden" src="" width="24" height="24">
             <img id="end" class="visuallyhidden" src="" width="24" height="24">
@@ -96,7 +96,11 @@
     var lastTimestamp = 0;
     var gridHeight = 0;
     var gridWidth = 0;
-    var lastPath;
+    var lastPath = [];
+
+    var img_container = document.getElementById("img_container");
+
+    var numFloors = 0;
 
     //var lastStartPath;
     //var lastEndPath;
@@ -106,7 +110,7 @@
     var originalWidth = 0;
     var originalHeight = 0;
 
-    var imageURL;
+    var imgArray;
     var startIconURL;
     var endIconURL;
 
@@ -114,6 +118,7 @@
     var width = $(window).width(); //prefs.getString("rdW");
     var height = $(window).height(); //prefs.getString("rdH");
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
+    var GridName = "WestAcersTest3";
     var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
@@ -149,10 +154,11 @@
     }
 
     function generatePath(storeName) {
-        if (lastPath) {
-            lastPath.remove();
-            //lastStartPath.remove();
-            //lastEndPath.remove();
+        if (lastPath[]) {
+            //Loop through last paths and remove them
+            for (var x = 0; x < lastPath.length; x++) {
+                lastPath[x].remove();
+            }
             lastEndIcon.remove();
         }
         var counter = 0;
@@ -179,12 +185,7 @@
         var startY;
         var endX;
         var endY;
-        //var startPath = new Path();
-        //startPath.strokeColor = 'green';
-        //startPath.strokeWidth = originalTileSize;
-        //var endPath = new Path();
-        //endPath.strokeColor = 'red';
-        //endPath.strokeWidth = originalTileSize;
+
         var path = new Path();
         path.strokeColor = 'red';
         path.strokeWidth = 3;
@@ -193,30 +194,16 @@
             if (element == data[0]) {
                 startPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
             }
-            /*
-            if (element == data[0] || element == data[1]) {
-                startPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
-            }
-            if (element == data[data.length - 1] || element == data[data.length - 2]) {
-                endPath.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
-            }
-            */
-            //if (element != data[0] && element != data[1] && element != data[data.length - 1] && element != data[data.length - 2]) {
-            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
-            // }
             if (element == data[data.length - 1]) {
                 endPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY - 12);
             }
+            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
         path.onFrame = function(event) {
             path.strokeColor.hue += 1;
         }
         path.smooth();
-        //startPath.smooth();
-        //endPath.smooth();
-        lastPath = path;
-        //lastStartPath = startPath;
-        //lastEndPath = endPath;
+        lastPath.push(path);
         drawStartEnd(startPoint, endPoint);
     }
 
@@ -240,35 +227,47 @@
         return path;
     }
 
+    //------------------------------------------------------------
+    // FUNCTIONS FOR READING JSON DATA FROM FIREBASE HERE
+    //------------------------------------------------------------
+
     function readInData() {
-        var grid_name = "WestAcersTest3"; //prefs.getString("dataName");
+        var grid_name = GridName; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
             grid = snapshot.val();
             var obj = JSON.parse(grid.gridInfo);
 
             if (obj) {
                 DATA = obj;
-                imageURL = DATA.imageInfo;
+                imgArray = DATA.imageInfo;
+                console.log(imgArray);
+                numFloors = imgArray.length;
+                console.log(numFloors);
                 var myCanvas = document.getElementById("myCanvas");
-                myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: " + 'url("' + imageURL + '"); background-size: ' + width + 'px ' + height + 'px;');
+                myCanvas.setAttribute("style", "width: " + width + "px; height: " + height + "px;");
                 originalTileSize = DATA.scaleInfo.tileSize;
                 originalWidth = DATA.scaleInfo.imgWidth;
                 originalHeight = DATA.scaleInfo.imgHeight;
                 gridHeight = DATA.height;
                 gridWidth = DATA.width;
+                loadGrid();
             }
         });
     }
 
+
     function readInStores() {
-        var grid_name = "WestAcersTest3"; //prefs.getString("dataName");
+        var grid_name = GridName; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
             grid = snapshot.val();
             var obj = JSON.parse(grid.gridInfo);
             if (obj) {
+                console.log(obj);
                 STORES = obj.storeInfo;
+                console.log(STORES);
                 var index = STORES.map(x => x.name).indexOf('start');
                 START = STORES[index];
+                console.log(START);
                 STORES.splice(index, 1);
                 console.log(showButtons);
                 if (showButtons == true) {
@@ -277,6 +276,62 @@
             }
         });
     }
+
+    //------------------------------------------------------------
+    // FUNCTIONS  FOR LOADING IMAGES HERE
+    //------------------------------------------------------------
+    function loadGrid() {
+        var x = 0;
+        var y = 0;
+        // Create Image html elements
+        var loopArray = function(arr) {
+            alertWhenDone("Creating Image " + x, function() {
+                x++;
+                floorNum = x;
+                var image = document.createElement("IMG");
+                image.setAttribute("id", "floor" + floorNum);
+                img_container.appendChild(image);
+                if (x < arr.length) {
+                    loopArray(arr);
+                }
+            });
+        }
+        loopArray(imgArray);
+
+        // Populate each image with an image for that floor
+        var loopArray2 = function(arr) {
+            alertWhenDone(y + 1, function() {
+                y++;
+                floorNum = y;
+                var image = document.getElementById("floor" + floorNum);
+                var downloadingimage = new Image();
+                downloadingimage.onload = function() {
+                    image.src = this.src;
+                    image.width = width;
+                    image.height = height / numFloors;
+                    image.display = "block";
+                    //drawArea.appendChild(image);
+                    if (y < arr.length) {
+                        loopArray2(arr);
+                    }
+                }
+                downloadingimage.src = imgArray[y - 1];
+            });
+        }
+        loopArray2(imgArray);
+
+        //drawArea.setAttribute("style", "width:" + width + "px height:" + height + "px;");
+        //console.log(width + " " + height);
+
+    }
+
+    function alertWhenDone(msg, callback) {
+        console.log(msg);
+        callback();
+    }
+
+    //------------------------------------------------------------
+    //------------------------------------------------------------
 
     //gadgets.util.registerOnLoadHandler(onLoad);
 </script>
