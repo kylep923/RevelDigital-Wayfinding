@@ -254,6 +254,10 @@ h6 {
     padding: 10px 10px;
 }
 
+.control_button {
+    width: 28%;
+}
+
 .login_btn {
     background-color: #4CAF50;
     color: white;
@@ -264,31 +268,20 @@ h6 {
     width: 100%;
 }
 
-button:hover {
-    opacity: 0.8;
-}
-
 .button {
     margin-top: 15px;
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 7px 10px;
-    margin: 4px 0;
-    cursor: pointer;
-    width: 60%;
-}
-
-button {
     border: none;
     background-color: #4CAF50;
+    color: white;
     border-radius: 5px;
     font-size: 90%;
     cursor: pointer;
     padding: 2px 8px;
     margin: 0 2%;
+    width: 45%;
 }
 
 button:hover {

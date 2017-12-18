@@ -76,7 +76,7 @@
                     <li style="float:right"><a class="active" id="logout_btn">Logout</a></li>
                 </ul>
             </div>
-            <table id="grids_table"></table>
+            <table id="buildings_table"></table>
             <button id="new_grid_btn" class='login_btn'>Add New</button>
         </div>
     </div>
@@ -86,25 +86,29 @@
         <div id="draw_area" class="floatTL"></div>
 
         <div id="algorithm_panel" class="panel right_panel">
-            <h2>Configure Grid</h2>
+            <h2 id="config_panel_header">Configure Floor 1</h2>
             <h3>Tile Size</h3>
             <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
             <button type="submit" class="button" id="submit">Redraw Grid</button>
             <button type="submit" class="button" id="add_transition_btn">Add Transition</button>
-            <button class="button" id="get_array">Finish Creating Grid</button>
+            <button type="submit" class="button" id="add_floor_btn">Add Floor</button>
+            <button type="submit" class="button" id="save_floor_btn">Save Floor</button>
+            <button type="submit" class="button" id="prev_floor_btn">Prev Floor</button>
+            <button type="submit" class="button" id="next_floor_btn">Next Floor</button>
+            <button class="button" id="get_array">Finish</button>
         </div>
 
         <!-- #algorithm_panel -->
         <div id="play_panel" class="panel right_panel">
-            <button id="button1" class="button">Start Search</button>
-            <button id="button2" class="button">Pause Search</button>
-            <button id="button3" class="button">Clear Walls</button>
+            <button id="button1" class="control_button">Start Search</button>
+            <button id="button2" class="control_button">Pause Search</button>
+            <button id="button3" class="control_button">Clear Walls</button>
         </div>
 
         <div id="store_panel" class="panel right_panel">
             <h3>Add Store Location</h3>
             <button id="addStore" class="button">ADD</button>
-            <button id="back_btn" class="button">Back To Grid List</button>
+            <button id="back_btn" class="button">Back To Grids</button>
         </div>
         <div id="stats"></div>
 
@@ -113,13 +117,13 @@
 
             <!-- Modal content -->
             <div class="modal-content">
-                <h3>Enter Image URL's for each floor.</h3>
+                <h3>Enter Image URL's for this floor.</h3>
                 <input type="text" id="grid_url"><br/>
-                <button class="button" id="add_grid_url">Add</button>
+                <button class="login_btn" id="add_grid_url">Add</button>
                 <h4>Tile Size</h4>
                 <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
                 <h3>Click Create Grid to load your new grid.</h3>
-                <button class="button" id="create_grid">Create Grid</button>
+                <button class="login_btn" id="create_grid">Create Grid</button>
 
             </div>
 
@@ -152,9 +156,9 @@
             <!-- Modal content -->
             <div class="modal-content">
                 <h4>Enter a name for your grid.</h4>
-                <input type="text" id="grid_name"><br/>
+                <input type="text" id="buildingName"><br/>
                 <h4>Enter a description for your grid.</h4>
-                <input type="text" id="grid_description"><br/>
+                <input type="text" id="buildingDescription"><br/>
                 <input type="submit" class="button" value="Add" id="add_name"><br/>
             </div>
 
@@ -190,7 +194,7 @@
                     if (!account) {
                         firebase.database().ref('/' + api_key).set({
                             accountName: res.name,
-                            grids: []
+                            buildings: []
                         });
                     }
                 });
@@ -206,16 +210,16 @@
         document.getElementById("editor_container").style.display = "none";
     }
 
-    function writeGridData(gridName, gridInfo, gridDesc) {
-        firebase.database().ref('/' + api_key + '/grids/' + gridName).set({
-            gridInfo: gridInfo,
-            gridDesc: gridDesc
+    function writeGridData(buildingName, floorGrids, buildingDesc) {
+        firebase.database().ref('/' + api_key + '/buildings/' + buildingName).set({
+            floorGrids: floorGrids,
+            buildingDesc: buildingDesc
         });
     }
 
-    function deleteGridData(gridName) {
-        console.log(gridName);
-        var del_obj = firebase.database().ref('/' + api_key + '/grids/' + gridName);
+    function deleteGridData(buildingName) {
+        console.log(buildingName);
+        var del_obj = firebase.database().ref('/' + api_key + '/buildings/' + buildingName);
         del_obj.remove().then(function(ref) {
             // data has been deleted locally and in the database
             loadListPage();
@@ -243,7 +247,7 @@
                     if (!account) {
                         firebase.database().ref('/' + api_key).set({
                             accountName: res.name,
-                            grids: []
+                            buildings: []
                         });
                     }
                 });
@@ -269,13 +273,13 @@
         document.getElementById("grid_list_container").style.display = "inline";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
-        document.getElementById("grids_table").innerHTML = "";
-        firebase.database().ref('/' + api_key + '/grids').once('value').then(function(snapshot) {
+        document.getElementById("buildings_table").innerHTML = "";
+        firebase.database().ref('/' + api_key + '/buildings').once('value').then(function(snapshot) {
             // Getting Grid Info From Firebase
             if (snapshot.val() !== null) {
                 var keys = Object.keys(snapshot.val());
                 var db = snapshot.val();
-                var grids_table = document.getElementById("grids_table");
+                var buildings_table = document.getElementById("buildings_table");
                 // Create Table Header Row
                 var thr = document.createElement('tr');
                 // Create table headers
@@ -293,7 +297,7 @@
                 thr.appendChild(th2);
                 thr.appendChild(th3);
                 // add header row to Table
-                grids_table.appendChild(thr);
+                buildings_table.appendChild(thr);
                 if (db) {
                     for (key in keys) {
                         // Row Info
@@ -301,9 +305,9 @@
                         var row = db[key];
                         //console.log(key);
                         //console.log(db);
-                        //console.log(row.gridDesc);
-                        var gridInfo = row.gridInfo;
-                        var gridDesc = row.gridDesc;
+                        //console.log(row.buildingDesc);
+                        var floorGrids = row.floorGrids;
+                        var buildingDesc = row.buildingDesc;
                         // Creating Rows and Delete button
                         var tr = document.createElement('tr');
                         var td1 = document.createElement('td');
@@ -316,7 +320,7 @@
                         td4.innerHTML = "<button class='login_btn' onclick=deleteGridData('" + key + "')>Delete</button>";
                         // Adding info to rows and delete button
                         var text1 = document.createTextNode(key);
-                        var text2 = document.createTextNode(gridDesc);
+                        var text2 = document.createTextNode(buildingDesc);
                         var btnText = document.createTextNode("Delete");
                         td1.appendChild(text1);
                         td2.appendChild(text2);
@@ -325,7 +329,7 @@
                         tr.appendChild(td2);
                         tr.appendChild(td3);
                         tr.appendChild(td4);
-                        grids_table.appendChild(tr);
+                        buildings_table.appendChild(tr);
                     }
                 }
             }

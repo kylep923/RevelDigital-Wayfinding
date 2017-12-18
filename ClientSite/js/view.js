@@ -79,12 +79,12 @@ var View = {
                     rects[rowId].push(rect);
                 }
                 percent = Math.round((rowId + 1) / numRows * 100);
-                console.log(percent);
                 $stats.text(
                     'generating grid ' +
                     percent + '%'
                 );
                 done(null);
+                console.log(percent);
                 if (percent == 100) {
                     finishLoadingGrid();
                     document.getElementById("loadScreen").style.display = "none";

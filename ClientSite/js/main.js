@@ -29,13 +29,14 @@ var transitionStartArray = [];
 var transitionEndAray = [];
 var enterStoreMode = false;
 var enterTransitionMode = false;
-var current_floor = 0;
+var current_floor = 1;
 var start_end = "start";
 var scaleObj;
-var grid_name = "";
-var grid_description = "";
+var buildingName = "";
+var buildingDescription = "";
 var imgArray = [];
-var gridArray = [];
+var floorArray = {};
+var currentFloor = 0;
 var width = 0;
 var height = 0;
 var obj;
@@ -123,14 +124,17 @@ function alertWhenDone(msg, callback) {
 function saveFloor(floorName) {
     var gridItem = {};
     gridItem["name"] = floorName;
-    gridItem["gridInfo"] = Controller.grid;
+    gridItem["floorGrids"] = Controller.grid;
     gridItem["gridImage"] = imageURL;
 }
 
-function loadOldGrid(api_key, gridName) {
+function loadOldGrid(api_key, buildingName) {
     document.getElementById("editor_container").style.display = "inline";
     document.getElementById("login_container").style.display = "none";
     document.getElementById("grid_list_container").style.display = "none";
+    document.getElementById("buildingName").value = buildingName;
+
+    current_floor = 1;
 
     loadEditor();
 
@@ -143,11 +147,13 @@ function loadOldGrid(api_key, gridName) {
 
     enterStoreMode = false;
 
-    firebase.database().ref('/' + api_key + '/grids/' + gridName).once('value').then(function(snapshot) {
+    firebase.database().ref('/' + api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
         if (snapshot.val() !== null) {
             console.log(snapshot.val())
-            obj = JSON.parse(snapshot.val().gridInfo);
-            imgArray = obj.imageInfo;
+            obj = JSON.parse(snapshot.val().floorGrids);
+            floorArray = obj;
+            console.log(floorArray);
+            imgArray = obj[current_floor].imageInfo;
             console.log(imgArray);
 
             loadGrid();
@@ -169,14 +175,15 @@ function loadOldGrid(api_key, gridName) {
 //continue_btn.onclick = function() {
 
 function finishLoadingGrid() {
-    if (obj) {
-        var matrix = obj.nodes.map(function(nested) {
+    if (floorArray != {}) {
+        var matrix = floorArray[current_floor].nodes.map(function(nested) {
             return nested.map(function(element) {
-                return Controller.setWalkableAt(element.x, element.y, element.walkable);
-                //return element.walkable ? 0 : 1;
+                Controller.setWalkableAt(element.x, element.y, element.walkable);
+                return element.walkable ? 0 : 1;
             });
         });
         //document.getElementById("continueModal").style.display = "none";
+        console.log(matrix);
     }
 }
 
@@ -325,51 +332,48 @@ create_grid.onclick = function() {
     loadGrid();
 }
 
+
+
+//------------------------------------------------------------
+// CONFIGURE GRID PANEL BUTTONS
+//------------------------------------------------------------
+// FINISH
 get_array.onclick = function() {
     // Get the modal
     var modal = document.getElementById('myModal');
     modal.style.display = "block";
 
+    // ADD 
     add_name.onclick = function() {
-        var grid_input_name = document.getElementById('grid_name');
-        var grid_input_description = document.getElementById('grid_description');
-        grid_name = grid_input_name.value;
-        grid_description = grid_input_description.value;
-        //check if the 
-        firebase.database().ref('/' + api_key + '/grids/' + grid_name).once('value').then(function(snapshot) {
+        var grid_input_name = document.getElementById('buildingName');
+        var grid_input_description = document.getElementById('buildingDescription');
+        buildingName = grid_input_name.value;
+        buildingDescription = grid_input_description.value;
+        //check if the DB if this already exists.
+        firebase.database().ref('/' + api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
             grid = snapshot.val();
             if (!grid) {
-                console.log(grid_name);
+                console.log(buildingName);
                 modal.style.display = "none";
 
-                var gridArray = Controller.grid;
-                gridArray["storeInfo"] = storeArray;
-                console.log(storeArray);
-                gridArray["scaleInfo"] = scaleObj;
-                gridArray["imageInfo"] = imgArray;
-                gridArray["floorInfo"] = transitionArray;
-                var jsonGrid = JSON.stringify(gridArray);
+                var jsonGrid = JSON.stringify(floorArray);
                 console.log(jsonGrid);
-                writeGridData(grid_name, jsonGrid, grid_description);
+                writeGridData(buildingName, jsonGrid, buildingDescription);
                 loadListPage();
-                alert("Grid " + grid_name + " Added Sccussfully");
+                alert("Grid " + buildingName + " Added Sccussfully");
+                //location.reload();
             } else {
                 if (confirm('Are you sure you want to overwrite this grid in the database?')) {
                     // Save it!
-                    console.log(grid_name);
+                    console.log(buildingName);
                     modal.style.display = "none";
 
-                    var gridArray = Controller.grid;
-                    gridArray["storeInfo"] = storeArray;
-                    console.log(storeArray);
-                    gridArray["scaleInfo"] = scaleObj;
-                    gridArray["imageInfo"] = imgArray;
-                    gridArray["floorInfo"] = transitionArray;
-                    var jsonGrid = JSON.stringify(gridArray);
+                    var jsonGrid = JSON.stringify(floorArray);
                     console.log(jsonGrid);
-                    writeGridData(grid_name, jsonGrid, grid_description);
+                    writeGridData(buildingName, jsonGrid, buildingDescription);
                     loadListPage();
-                    alert("Grid " + grid_name + " overwriten Sccussfully");
+                    alert("Grid " + buildingName + " overwriten Sccussfully");
+                    //location.reload();
                 } else {
                     // Do nothing!
                 }
@@ -381,6 +385,95 @@ get_array.onclick = function() {
     //download("Grid.json", jsonGrid);
 }
 
+// REDRAW GRID
+
+// ADD TRANSITION
+
+// ADD FLOOR
+add_floor_btn.onclick = function() {
+    //saveFloor(current_floor);
+    current_floor++;
+
+    var s = d3.selectAll('svg');
+    var i = d3.selectAll('img');
+    s.remove();
+    i.remove();
+    width = 0;
+    height = 0;
+    enterStoreMode = false;
+
+    imgArray = [];
+
+    document.getElementById("createGridModal").style.display = "inline";
+}
+
+// SAVE FLOOR
+save_floor_btn.onclick = function() {
+    saveFloor(current_floor);
+    console.log(floorArray);
+}
+
+function saveFloor(floorCount) {
+    var floor = Controller.grid
+    floor["storeInfo"] = storeArray;
+    floor["scaleInfo"] = scaleObj;
+    floor["imageInfo"] = imgArray;
+    floorArray[floorCount] = floor;
+    alert("Floor " + current_floor + " Saved Successfully");
+}
+
+// PREV FLOOR
+prev_floor_btn.onclick = function() {
+    console.log(current_floor);
+    if (current_floor != 1) {
+        current_floor--;
+
+        document.getElementById('config_panel_header').innerHTML = "Configure Floor " + current_floor;
+
+        var s = d3.selectAll('svg');
+        var i = d3.selectAll('img');
+        s.remove();
+        i.remove();
+        width = 0;
+        height = 0;
+        enterStoreMode = false;
+
+        loadGrid();
+    } else {
+        alert("You are on the ground floor!");
+    }
+
+}
+
+// NEXT FLOOR
+next_floor_btn.onclick = function() {
+    var numFloors = Object.keys(obj).length;
+    if (numFloors > current_floor) {
+        current_floor++;
+
+        document.getElementById('config_panel_header').innerHTML = "Configure Floor " + current_floor;
+
+        var s = d3.selectAll('svg');
+        var i = d3.selectAll('img');
+        s.remove();
+        i.remove();
+        width = 0;
+        height = 0;
+        enterStoreMode = false;
+
+        loadGrid();
+    } else if (current_floor == numFloors) {
+        alert("You are on the top floor!");
+    }
+}
+
+
+//------------------------------------------------------------
+// END OF CONFIGURE GRIDS PANEL BUTTONS
+//------------------------------------------------------------
+
+
+// OLD FUNCTION USED TO DOWNLOAD JSON INFO
 function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
