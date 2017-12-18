@@ -96,7 +96,7 @@
     var lastTimestamp = 0;
     var gridHeight = 0;
     var gridWidth = 0;
-    var lastPath = [];
+    var lastPath;
 
     var img_container = document.getElementById("img_container");
 
@@ -118,7 +118,7 @@
     var width = $(window).width(); //prefs.getString("rdW");
     var height = $(window).height(); //prefs.getString("rdH");
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
-    var GridName = "WestAcersTest3";
+    var GridName = "test5";
     var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
@@ -154,11 +154,10 @@
     }
 
     function generatePath(storeName) {
-        if (lastPath[]) {
+        if (lastPath) {
+
             //Loop through last paths and remove them
-            for (var x = 0; x < lastPath.length; x++) {
-                lastPath[x].remove();
-            }
+            lastPath.remove();
             lastEndIcon.remove();
         }
         var counter = 0;
@@ -203,7 +202,7 @@
             path.strokeColor.hue += 1;
         }
         path.smooth();
-        lastPath.push(path);
+        lastPath = path;
         drawStartEnd(startPoint, endPoint);
     }
 

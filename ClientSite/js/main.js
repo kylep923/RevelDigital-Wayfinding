@@ -38,6 +38,7 @@ var imgArray = [];
 var gridArray = [];
 var width = 0;
 var height = 0;
+var obj;
 
 
 // Reloading the grid and images. for adjusting tile size
@@ -102,6 +103,7 @@ function loadGrid() {
                 } else {
                     drawGrid();
                 }
+
             }
             downloadingimage.src = imgArray[y - 1];
         });
@@ -123,6 +125,59 @@ function saveFloor(floorName) {
     gridItem["name"] = floorName;
     gridItem["gridInfo"] = Controller.grid;
     gridItem["gridImage"] = imageURL;
+}
+
+function loadOldGrid(api_key, gridName) {
+    document.getElementById("editor_container").style.display = "inline";
+    document.getElementById("login_container").style.display = "none";
+    document.getElementById("grid_list_container").style.display = "none";
+
+    loadEditor();
+
+    var s = d3.selectAll('svg');
+    var i = d3.selectAll('img');
+    s.remove();
+    i.remove();
+    width = 0;
+    height = 0;
+
+    enterStoreMode = false;
+
+    firebase.database().ref('/' + api_key + '/grids/' + gridName).once('value').then(function(snapshot) {
+        if (snapshot.val() !== null) {
+            console.log(snapshot.val())
+            obj = JSON.parse(snapshot.val().gridInfo);
+            imgArray = obj.imageInfo;
+            console.log(imgArray);
+
+            loadGrid();
+
+
+            //document.getElementById("continueModal").style.display = "inline";
+            /*
+                        var matrix = obj.nodes.map(function(nested) {
+                            return nested.map(function(element) {
+                                return Controller.setWalkableAt(element.x, element.y, element.walkable);
+                                //return element.walkable ? 0 : 1;
+                            });
+                        });
+            */
+        }
+    });
+}
+
+//continue_btn.onclick = function() {
+
+function finishLoadingGrid() {
+    if (obj) {
+        var matrix = obj.nodes.map(function(nested) {
+            return nested.map(function(element) {
+                return Controller.setWalkableAt(element.x, element.y, element.walkable);
+                //return element.walkable ? 0 : 1;
+            });
+        });
+        //document.getElementById("continueModal").style.display = "none";
+    }
 }
 
 function drawGrid() {
@@ -299,7 +354,25 @@ get_array.onclick = function() {
                 loadListPage();
                 alert("Grid " + grid_name + " Added Sccussfully");
             } else {
-                alert("Error: That name already exits!");
+                if (confirm('Are you sure you want to overwrite this grid in the database?')) {
+                    // Save it!
+                    console.log(grid_name);
+                    modal.style.display = "none";
+
+                    var gridArray = Controller.grid;
+                    gridArray["storeInfo"] = storeArray;
+                    console.log(storeArray);
+                    gridArray["scaleInfo"] = scaleObj;
+                    gridArray["imageInfo"] = imgArray;
+                    gridArray["floorInfo"] = transitionArray;
+                    var jsonGrid = JSON.stringify(gridArray);
+                    console.log(jsonGrid);
+                    writeGridData(grid_name, jsonGrid, grid_description);
+                    loadListPage();
+                    alert("Grid " + grid_name + " overwriten Sccussfully");
+                } else {
+                    // Do nothing!
+                }
             }
         });
 

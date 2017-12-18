@@ -39,137 +39,7 @@
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
 
     <style>
-        .floatTL {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            display: block;
-        }
-        
-        img {
-            padding: 0px;
-            margin: 0px;
-            display: block;
-        }
-        
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 10px;
-            overflow: hidden;
-            background-color: #333;
-        }
-        
-        li {
-            float: left;
-        }
-        
-        li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-        
-        li a:hover {
-            background-color: #111;
-        }
-        
-        .active {
-            background-color: #4CAF50;
-        }
-        
-        #new_grid_btn {
-            float: right;
-        }
-        
-        table {
-            padding: 10px;
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        
-        td,
-        th {
-            border: 1px solid #979696;
-            text-align: left;
-            padding: 8px;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-        
-        form {
-            border: 3px solid #f1f1f1;
-        }
-        
-        #login {
-            border: 3px solid #f1f1f1;
-        }
-        
-        input[type=text],
-        input[type=password] {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        button:hover {
-            opacity: 0.8;
-        }
-        
-        .cancelbtn {
-            width: auto;
-            padding: 10px 18px;
-            background-color: #f44336;
-        }
-        
-        .imgcontainer {
-            text-align: center;
-            margin: 24px 0 12px 0;
-        }
-        
-        img.avatar {
-            width: 10%;
-            border-radius: 50%;
-            display: inline;
-        }
-        
-        .container {
-            padding: 16px;
-        }
-        
-        span.psw {
-            float: right;
-            padding-top: 16px;
-        }
-        /* Change styles for span and cancel button on extra small screens */
-        
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
-            }
-            .cancelbtn {
-                width: 100%;
-            }
-        }
+
     </style>
 
 </head>
@@ -186,7 +56,7 @@
                 <label><b>Revel API Key</b></label>
                 <input id="api_key" type="text" placeholder="Enter API Key" name="api_key" required>
 
-                <button id="submit_api" type="submit">Login</button>
+                <button id="submit_api" type="submit" class="login_btn">Login</button>
             </div>
 
             <div class="container" style="background-color:#f1f1f1">
@@ -207,7 +77,7 @@
                 </ul>
             </div>
             <table id="grids_table"></table>
-            <button id="new_grid_btn">Add New</button>
+            <button id="new_grid_btn" class='login_btn'>Add New</button>
         </div>
     </div>
 
@@ -226,15 +96,15 @@
 
         <!-- #algorithm_panel -->
         <div id="play_panel" class="panel right_panel">
-            <button id="button1" class="control_button">Start Search</button>
-            <button id="button2" class="control_button">Pause Search</button>
-            <button id="button3" class="control_button">Clear Walls</button>
+            <button id="button1" class="button">Start Search</button>
+            <button id="button2" class="button">Pause Search</button>
+            <button id="button3" class="button">Clear Walls</button>
         </div>
 
         <div id="store_panel" class="panel right_panel">
             <h3>Add Store Location</h3>
-            <button id="addStore" class="store_button">ADD</button>
-            <button id="back_btn" class="store_button">Back To Grid List</button>
+            <button id="addStore" class="button">ADD</button>
+            <button id="back_btn" class="button">Back To Grid List</button>
         </div>
         <div id="stats"></div>
 
@@ -254,6 +124,22 @@
             </div>
 
         </div>
+
+        <div id="continueModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <h4>Continue when the grid is done drawing</h4>
+                <button class="button" id="continue_btn">Continue</button>
+            </div>
+
+        </div>
+
+        <div id="loadScreen">
+            Loading...
+            <div class="loader"></div>
+        </div>
+
 
         <script type="text/javascript" src="./js/main.js"></script>
         <script type="text/javascript" src="./js/view.js"></script>
@@ -279,6 +165,9 @@
 </body>
 
 <script>
+    document.getElementById("continueModal").style.display = "none";
+    document.getElementById("loadScreen").style.display = "none";
+
     // Database info and globals
     //-------------------------------------------------------------------------------------
     var database = firebase.database();
@@ -420,8 +309,11 @@
                         var td1 = document.createElement('td');
                         var td2 = document.createElement('td');
                         var td3 = document.createElement('td');
+                        var td4 = document.createElement('td');
                         var delButton = document.createElement('button');
-                        td3.innerHTML = "<button onclick=deleteGridData('" + key + "')>Delete</button>";
+                        var editButton = document.createElement('button');
+                        td3.innerHTML = "<button class='login_btn' onclick=loadOldGrid('" + api_key + "','" + key + "')>Edit</button>";
+                        td4.innerHTML = "<button class='login_btn' onclick=deleteGridData('" + key + "')>Delete</button>";
                         // Adding info to rows and delete button
                         var text1 = document.createTextNode(key);
                         var text2 = document.createTextNode(gridDesc);
@@ -432,6 +324,7 @@
                         tr.appendChild(td1);
                         tr.appendChild(td2);
                         tr.appendChild(td3);
+                        tr.appendChild(td4);
                         grids_table.appendChild(tr);
                     }
                 }
@@ -447,9 +340,12 @@
     }
 
     back_btn.onclick = function() {
+        location.reload();
+        /*
         document.getElementById("grid_list_container").style.display = "inline";
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
+        */
     }
 
     new_grid_btn.onclick = function() {
