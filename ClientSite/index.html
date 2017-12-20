@@ -95,6 +95,7 @@
             <button type="submit" class="button" id="save_floor_btn">Save Floor</button>
             <button type="submit" class="button" id="prev_floor_btn">Prev Floor</button>
             <button type="submit" class="button" id="next_floor_btn">Next Floor</button>
+            <button type="submit" class="button" id="show_stores">Show Stores</button>
             <button class="button" id="get_array">Finish</button>
         </div>
 
@@ -159,7 +160,8 @@
                 <input type="text" id="buildingName"><br/>
                 <h4>Enter a description for your grid.</h4>
                 <input type="text" id="buildingDescription"><br/>
-                <input type="submit" class="button" value="Add" id="add_name"><br/>
+                <button class="button" id="add_name">Add</button>
+                <button class="button" id="no_add">Cancel</button>
             </div>
 
         </div>
@@ -215,6 +217,7 @@
             floorGrids: floorGrids,
             buildingDesc: buildingDesc
         });
+        console.log(floorGrids);
     }
 
     function deleteGridData(buildingName) {

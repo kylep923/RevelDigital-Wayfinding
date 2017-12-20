@@ -124,11 +124,11 @@ $.extend(Controller, {
         // => ready
     },
     ondrawWall: function(event, from, to, gridX, gridY) {
-        this.setWalkableAt(gridX, gridY, false);
+        this.setTileAt(gridX, gridY, 'walkable', false);
         // => drawingWall
     },
     oneraseWall: function(event, from, to, gridX, gridY) {
-        this.setWalkableAt(gridX, gridY, true);
+        this.setTileAt(gridX, gridY, 'walkable', true);
         // => erasingWall
     },
     onsearch: function(event, from, to) {
@@ -438,10 +438,10 @@ $.extend(Controller, {
                 }
                 break;
             case 'drawingWall':
-                this.setWalkableAt(gridX, gridY, false);
+                this.setTileAt(gridX, gridY, 'walkable', false);
                 break;
             case 'erasingWall':
-                this.setWalkableAt(gridX, gridY, true);
+                this.setTileAt(gridX, gridY, 'walkable', true);
                 break;
         }
     },
@@ -504,9 +504,9 @@ $.extend(Controller, {
         this.endY = gridY;
         View.setEndPos(gridX, gridY);
     },
-    setWalkableAt: function(gridX, gridY, walkable) {
+    setTileAt: function(gridX, gridY, value, walkable) {
         this.grid.setWalkableAt(gridX, gridY, walkable);
-        View.setAttributeAt(gridX, gridY, 'walkable', walkable);
+        View.setAttributeAt(gridX, gridY, value, walkable);
     },
     isStartPos: function(gridX, gridY) {
         return gridX === this.startX && gridY === this.startY;

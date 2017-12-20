@@ -22,6 +22,11 @@ var View = {
             fill: '#e40',
             'stroke-opacity': 0.2,
         },
+        store: {
+            fill: '#ff00d0',
+            'fill-opacity': 0.4,
+            'stroke-opacity': 0.2,
+        }
 
 
 
@@ -162,7 +167,7 @@ var View = {
                     this.setCoordDirty(gridX, gridY, true);
                     break;*/
             case 'tested':
-                color = (value === true) ? nodeStyle.tested.fill : nodeStyle.normal.fill;
+                color = (value === true) ? nodeStyle.store.fill : nodeStyle.normal.fill;
 
                 this.colorizeNode(this.rects[gridY][gridX], color);
                 this.setCoordDirty(gridX, gridY, true);
