@@ -187,17 +187,23 @@ function loadOldGrid(api_key, buildingName) {
 /*
 Function: finishLoadingGrid()
 Use: This function draws in any walls after the grid finishes loading.
-Details: Issues occure when loading stores and walls at the same time.
+Details: Issues occure when loading stores and walls at the same time. --RESOLVED
 */
 function finishLoadingGrid() {
     if (floorArray[current_floor]) {
-
+        // Load walls
         var matrix = floorArray[current_floor].nodes.map(function(nested) {
             return nested.map(function(element) {
                 Controller.setTileAt(element.x, element.y, 'walkable', element.walkable);
                 return element.walkable ? 0 : 1;
             });
         });
+        // Load stores
+        var stores = floorArray[current_floor].storeInfo;
+        var numStores = Object.keys(stores).length;
+        for (var x = 0; x < numStores; x++) {
+            Controller.setTileAt(stores[x].x, stores[x].y, 'tested', true);
+        }
     }
 }
 
@@ -205,7 +211,7 @@ function finishLoadingGrid() {
 Button: name - show_stores | text - Show Stores
 Function: onclick
 Use: Highlights all store locations for the current floor in pink.
-Details: Currently issue: when this runs the grids loaded after are not animated correctly
+Details: Currently issue: when this runs the grids loaded after are not animated correctly --RESOLVED
 */
 show_stores.onclick = function() {
     var stores = floorArray[current_floor].storeInfo;
@@ -570,7 +576,9 @@ prev_floor_btn.onclick = function() {
             storeArray = floorArray[current_floor].storeInfo;
         }
 
-        Controller.reset();
+        Controller.clearOperations();
+        Controller.clearAll();
+        Controller.buildNewGrid();
         loadGrid();
     } else {
         alert("You are on the ground floor!");
@@ -607,7 +615,9 @@ next_floor_btn.onclick = function() {
             storeArray = floorArray[current_floor].storeInfo;
         }
 
-        Controller.reset();
+        Controller.clearOperations();
+        Controller.clearAll();
+        Controller.buildNewGrid();
         loadGrid();
     } else if (current_floor == numFloors) {
         alert("You are on the top floor!");
