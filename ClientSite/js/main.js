@@ -30,14 +30,15 @@ var tile_Size = document.getElementById("tile_size");
 var set_Node_Size = 30;
 var grid_size_x = 64;
 var grid_size_y = 36;
-var storeArray = [];
-var transitionArray = [];
-var transitionStartArray = [];
-var transitionEndAray = [];
+// Elevator Info
+var elevatorName;
+var isNewElevator;
+var elevatorArray = [];
+var enterElevatorMode = false;
+// Store Info
 var enterStoreMode = false;
-var enterTransitionMode = false;
+var storeArray = [];
 var current_floor = 1;
-var start_end = "start";
 var scaleObj;
 var buildingName = "";
 var buildingDescription = "";
@@ -167,12 +168,15 @@ function loadOldGrid(api_key, buildingName) {
     enterStoreMode = false;
 
     firebase.database().ref('/' + api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
-        if (snapshot.val() !== null) {
+        if (snapshot.val() != null) {
             console.log(snapshot.val())
             obj = JSON.parse(snapshot.val().floorGrids);
             floorArray = obj;
             if (obj[current_floor].storeInfo.length > 0) {
                 storeArray = obj[current_floor].storeInfo;
+            }
+            if (obj[0] != null) {
+                elevatorArray = obj[0];
             }
             console.log(storeArray);
             console.log(floorArray);
@@ -202,8 +206,9 @@ function finishLoadingGrid() {
         var stores = floorArray[current_floor].storeInfo;
         var numStores = Object.keys(stores).length;
         for (var x = 0; x < numStores; x++) {
-            Controller.setTileAt(stores[x].x, stores[x].y, 'tested', true);
+            Controller.setTileAt(stores[x].x, stores[x].y, 'store', true);
         }
+        showElevators();
     }
 }
 
@@ -217,7 +222,32 @@ show_stores.onclick = function() {
     var stores = floorArray[current_floor].storeInfo;
     var numStores = Object.keys(stores).length;
     for (var x = 0; x < numStores; x++) {
-        Controller.setTileAt(stores[x].x, stores[x].y, 'tested', true);
+        Controller.setTileAt(stores[x].x, stores[x].y, 'store', true);
+    }
+    showElevators();
+}
+
+/*
+Button: name - show_stores | text - Show Stores
+Function: onclick
+Use: Highlights all store locations for the current floor in pink.
+Details: Currently issue: when this runs the grids loaded after are not animated correctly --RESOLVED
+*/
+function showElevators() {
+    var elevators = floorArray[0];
+    // In elevators array
+    for (var x = 0; x < elevators.length; x++) {
+        // In elevator x
+        if (elevators[x].floorAccess) {
+            curr_elevator = elevators[x].floorAccess;
+            for (var y = 0; y < curr_elevator.length; y++) {
+                console.log(curr_elevator[y]);
+                if (curr_elevator[y].floor == current_floor) {
+                    console.log(curr_elevator[y]);
+                    Controller.setTileAt(curr_elevator[y].x, curr_elevator[y].y, 'elevator', true);
+                }
+            }
+        }
     }
 }
 
@@ -299,32 +329,6 @@ addStore.onclick = function() {
 }
 
 /*
-Button: name - add_transition_btn | text - Add Transition
-Function: onclick
-Use: Depreciated - used on old process of loading floors 
-Details:
-*/
-add_transition_btn.onclick = function() {
-    if (current_floor < imgArray.length) {
-        current_floor++;
-        addTransition(current_floor, start_end);
-    } else {
-        alert("You have already entered transition corridnates for each floor");
-    }
-}
-
-/*
--------UNFINISHED-------
-Function: addTransition(int, string)
-Use: sets enterTransitionMode to true.
-Details: This function will make enterTransition mode true for the start and end point of each transition.
-*/
-function addTransition(current_floor, start_end) {
-    alert("Select transition " + start_end + " coordinates on grid for floor " + current_floor);
-    enterTransitionMode = true;
-}
-
-/*
 Function: getStore(int, int)
 Use: This function will take an x and a y value and store that location information in storeArray.
 Details: The function will also ask the user to enter a name for the location.
@@ -333,12 +337,16 @@ Details: The function will also ask the user to enter a name for the location.
 function getStore(gridX, gridY) {
     if (enterStoreMode == true) {
         var name = prompt("Enter store name");
+        var catagory = prompt("Enter store catagory");
+        var description = prompt("Enter store description");
         floorNum = current_floor;
         storeArray.push({
             x: gridX,
             y: gridY,
             floor: floorNum,
-            name: name
+            name: name,
+            catagory: catagory,
+            description: description
         });
         enterStoreMode = false;
     }
@@ -348,34 +356,142 @@ function getStore(gridX, gridY) {
 }
 
 /*
--------UNFINISHED-------
-Function: getTransition(int, int)
-Use: Adds the location of transition tiles.
-Details: This function will add a tile on one floor for where the transition starts
-         and it will add an end tile on another floor.
+Button: name - config_elevator_btn | text - Config Elevator
+Function: onclick
+Use: Opens the elevatorEditor modal
+Details: this button is located in the algorithm_panel div
 */
-function getTransition(gridX, gridY) {
-    if (enterTransitionMode == true) {
-        floorNum = Math.ceil(gridX / (height / imgArray.length));
-        transitionArray.push({
-            floor: current_floor,
-            name: start_end,
-            x: gridX,
-            y: gridY
-        });
-        console.log(transitionArray);
-        if (start_end == "end") {
-            enterTransitionMode = false;
-            start_end = "start";
-        } else {
-            start_end = "end";
-            addTransition(current_floor, start_end);
+config_elevator_btn.onclick = function() {
+    document.getElementById("configElevatorModal").style.display = "inline-block";
+    document.getElementById("elevator_name").value = "";
+    populateElevators();
+}
+
+/*
+Function: addNewElevatorFloor()
+Use: Sets enterElevatorMode and isNewElevator to true, gets the name for the new elevator, and informs the user to enter the location of the new elevator.
+Details: 
+*/
+add_new_elevator.onclick = function() {
+    elevatorName = document.getElementById("elevator_name").value;
+    if (elevatorName != "") {
+        for (var x = 0; x < elevatorArray.length; x++) {
+            if (elevatorArray[x].name == elevatorName) {
+                alert("This elevator already exists");
+                return;
+            }
+        }
+        document.getElementById("configElevatorModal").style.display = "none";
+        alert("Select Elevator location");
+        enterElevatorMode = true;
+        isNewElevator = true;
+    } else {
+        alert("Enter a name for the new elevator and try again!");
+    }
+}
+
+/*
+Button: name - add_to_existing_elevator | text - Add Current Floor
+Function: onclick
+Use: Adds a floor tile to an existing elevator item.
+Details: This function sets enterElevatorMode to true, isNewElevator to false, gets the name for the new elevator,
+         and informs the user to enter the location of the new elevator.
+         The function will also check if the selected elevator already has a location on the current floor.
+*/
+add_to_existing_elevator.onclick = function() {
+    elevatorName = getSelectedText("select_elevator");
+    if (elevatorName != null) {
+        // Check if elevator already has access to current floor.
+        for (var x = 0; x < elevatorArray.length; x++) {
+            if (elevatorArray[x].name == elevatorName) {
+                for (var y = 0; y < elevatorArray[x].floorAccess.length; y++) {
+                    if (elevatorArray[x].floorAccess[y].floor == current_floor) {
+                        alert("This elevator already has a location on this floor!");
+                        return;
+                    }
+                }
+            }
+        }
+        // Hide configElevatorModal and prepare to get the elevator location.
+        document.getElementById("configElevatorModal").style.display = "none";
+        alert("Select Elevator location");
+        enterElevatorMode = true;
+        isNewElevator = false;
+    } else {
+        alert("Currently there are no existing elevators. Please enter a new one.");
+    }
+}
+
+/*
+Function: getElevator(int, int)
+Use: Adds the location of an elevator tile.
+Details: This function will add a tile on one floor for the location of a new or existing elevator.
+         If the elevator already has access to the current floor it will not add a new location.
+*/
+function getElevator(gridX, gridY) {
+    if (enterElevatorMode == true) {
+        var elevatorTile = {};
+        elevatorTile["floor"] = current_floor;
+        elevatorTile["x"] = gridX;
+        elevatorTile["y"] = gridY;
+
+        if (isNewElevator) {
+            var newElevator = {};
+            newElevator["name"] = elevatorName;
+            newElevator["floorAccess"] = [elevatorTile];
+            elevatorArray.push(newElevator);
+            alert("New Elevator Added!");
+        }
+        if (!isNewElevator) {
+            for (var x = 0; x < elevatorArray.length; x++) {
+                if (elevatorArray[x].name == elevatorName) {
+                    elevatorArray[x].floorAccess.push(elevatorTile);
+                    alert("Existing Elevator Updated!");
+                }
+            }
         }
     }
+    //populateElevators();
+    console.log(elevatorArray);
     Controller.rest();
     return;
 }
 
+/*
+Function: populateElevators()
+Use: This function will add select options to the select tag in the configElevatorModal
+Details: The function will loop throught all the elevators in the elevatorArray and add there name as a select option.
+*/
+function populateElevators() {
+    //Clear old options
+    var select = document.getElementById("select_elevator");
+    var length = select.options.length;
+    for (i = 0; i < length; i++) {
+        select.options[i] = null;
+    }
+    //Add new options
+    for (var x = 0; x < elevatorArray.length; x++) {
+        var opt = document.createElement('option');
+        opt.innerHTML = elevatorArray[x].name;
+        opt.value = elevatorArray[x].name;
+        select.appendChild(opt);
+    }
+}
+
+/*
+Function: getSelected(elementId)
+Use: Gets the selected item from a select element.
+Details: Used to return elevator currently selected in add_to_existing_elevator.onclick
+         The function will return the selected value or null if there is no values to select.
+*/
+function getSelectedText(elementId) {
+    var elt = document.getElementById(elementId);
+
+    if (elt.selectedIndex == -1)
+        return null;
+
+    return elt.options[elt.selectedIndex].text;
+}
 
 /*
 Button: name - add_grid_url | text - Add
@@ -433,6 +549,7 @@ get_array.onclick = function() {
         var grid_input_description = document.getElementById('buildingDescription');
         buildingName = grid_input_name.value;
         buildingDescription = grid_input_description.value;
+        saveFloor(current_floor);
         //check the DB if this building info already exists.
         firebase.database().ref('/' + api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
             grid = snapshot.val();
@@ -489,10 +606,6 @@ get_array.onclick = function() {
     //download("Grid.json", jsonGrid);
 }
 
-// REDRAW GRID
-
-// ADD TRANSITION
-
 /*
 Button: name - add_floor_btn | text - Add Floor
 Function: onclick
@@ -501,7 +614,7 @@ Details: The function clears the last grid, updates the current_floor, and reset
          width, height, enterStoreMode, imgArray, and storeArray.
 */
 add_floor_btn.onclick = function() {
-    //saveFloor(current_floor);
+    saveFloor(current_floor);
     current_floor++;
 
     var s = d3.selectAll('svg');
@@ -545,6 +658,7 @@ function saveFloor(floorCount) {
     floor["scaleInfo"] = scaleObj;
     floor["imageInfo"] = imgArray;
     floorArray[floorCount] = floor;
+    floorArray[0] = elevatorArray;
     console.log(floor);
 }
 
@@ -553,7 +667,8 @@ function saveFloor(floorCount) {
 Button: name - prev_floor_btn | text - Prev Floor
 Function: onclick
 Use: Loads the previous floor grid if there is one in the json.
-Details: This onclick function will select and remove the svg that holds the grid and the image that is behind it.
+Details: This onclick function will select save the current floor info
+         then remove the svg that holds the grid and the image that is behind it.
          The Configure Grid header is set to the correct floor.
          Also the width, height, enterStoreMode, and Controller are reset.
          Lastly loadGrid() is called;
@@ -561,6 +676,7 @@ Details: This onclick function will select and remove the svg that holds the gri
 prev_floor_btn.onclick = function() {
     console.log(current_floor);
     if (current_floor != 1) {
+        saveFloor(current_floor);
         current_floor--;
 
         document.getElementById('config_panel_header').innerHTML = "Configure Floor " + current_floor;
@@ -590,14 +706,21 @@ prev_floor_btn.onclick = function() {
 Button: name - next_floor_btn | text - Next Floor
 Function: onclick
 Use: Loads the next floor grid if there is one in the json.
-Details: This onclick function will select and remove the svg that holds the grid and the image that is behind it.
+Details: This onclick function will save the current floor info 
+            then select and remove the svg that holds the grid and the image that is behind it.
             The Configure Grid header is set to the correct floor.
             Also the width, height, enterStoreMode, and Controller are reset.
             Lastly loadGrid() is called;
 */
 next_floor_btn.onclick = function() {
-    var numFloors = Object.keys(obj).length - 1;
+    if (floorArray.length > 0) {
+        var numFloors = floorArray.length - 1;
+    } else {
+        var numFloors = floorArray.length
+    }
+    console.log(floorArray.length)
     if (numFloors > current_floor) {
+        saveFloor(current_floor);
         current_floor++;
 
         document.getElementById('config_panel_header').innerHTML = "Configure Floor " + current_floor;
@@ -619,7 +742,7 @@ next_floor_btn.onclick = function() {
         Controller.clearAll();
         Controller.buildNewGrid();
         loadGrid();
-    } else if (current_floor == numFloors) {
+    } else if (current_floor == numFloors || numFloors == 0) {
         alert("You are on the top floor!");
     }
 }

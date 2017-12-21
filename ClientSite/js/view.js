@@ -26,6 +26,11 @@ var View = {
             fill: '#ff00d0',
             'fill-opacity': 0.4,
             'stroke-opacity': 0.2,
+        },
+        elevator: {
+            fill: '#3200fa',
+            'fill-opacity': 0.4,
+            'stroke-opacity': 0.2,
         }
 
 
@@ -43,7 +48,7 @@ var View = {
         stroke: 'red',
         'stroke-width': 3,
     },
-    supportedOperations: ['opened', 'closed', 'tested'],
+    supportedOperations: ['opened', 'closed', 'store', 'elevator'],
     init: function(opts) {
         this.numCols = opts.numCols;
         this.numRows = opts.numRows;
@@ -166,16 +171,21 @@ var View = {
                     this.colorizeNode(this.rects[gridY][gridX], nodeStyle.closed.fill);
                     this.setCoordDirty(gridX, gridY, true);
                     break;*/
-            case 'tested':
+            case 'store':
                 color = (value === true) ? nodeStyle.store.fill : nodeStyle.normal.fill;
 
                 this.colorizeNode(this.rects[gridY][gridX], color);
                 this.setCoordDirty(gridX, gridY, true);
                 break;
-            case 'parent':
+            case 'elevator':
+                color = (value === true) ? nodeStyle.elevator.fill : nodeStyle.normal.fill;
+
+                this.colorizeNode(this.rects[gridY][gridX], color);
+                this.setCoordDirty(gridX, gridY, true);
+                break;
                 // XXX: Maybe draw a line from this node to its parent?
                 // This would be expensive.
-                break;
+                //break;
             default:
                 console.error('unsupported operation: ' + attr + ':' + value);
                 return;

@@ -90,7 +90,7 @@
             <h3>Tile Size</h3>
             <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
             <button type="submit" class="button" id="submit">Redraw Grid</button>
-            <button type="submit" class="button" id="add_transition_btn">Add Transition</button>
+            <button type="submit" class="button" id="config_elevator_btn">Edit Elevator</button>
             <button type="submit" class="button" id="add_floor_btn">Add Floor</button>
             <button type="submit" class="button" id="save_floor_btn">Save Floor</button>
             <button type="submit" class="button" id="prev_floor_btn">Prev Floor</button>
@@ -125,6 +125,23 @@
                 <input type="number" id="tile_size" min="1" max="50" value="10" required> px <br/>
                 <h3>Click Create Grid to load your new grid.</h3>
                 <button class="login_btn" id="create_grid">Create Grid</button>
+
+            </div>
+
+        </div>
+
+        <!-- Create/Edit Elevators Modal -->
+        <div id="configElevatorModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <h2>Configure Elevators/Stairs</h2>
+                <h3>Enter New Elevator Name</h3>
+                <input type="text" id="elevator_name"><br/>
+                <button class="button" style="width: 95%" id="add_new_elevator">Add New Elevator</button>
+                <h3>Edit Existing Elevator</h3>
+                <select id="select_elevator"></select><br/>
+                <button class="button" id="add_to_existing_elevator">Add Current Floor</button>
+                <button class="button" onclick="document.getElementById('configElevatorModal').style.display = 'none';">Close</button>
 
             </div>
 
@@ -173,6 +190,7 @@
 <script>
     document.getElementById("continueModal").style.display = "none";
     document.getElementById("loadScreen").style.display = "none";
+    document.getElementById("configElevatorModal").style.display = "none";
 
     // Database info and globals
     //-------------------------------------------------------------------------------------

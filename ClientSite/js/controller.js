@@ -394,8 +394,8 @@ $.extend(Controller, {
             getStore(gridX, gridY);
             return;
         }
-        if (enterTransitionMode == true) {
-            getTransition(gridX, gridY);
+        if (enterElevatorMode == true) {
+            getElevator(gridX, gridY);
             return;
         }
         if (this.can('dragStart') && this.isStartPos(gridX, gridY)) {
