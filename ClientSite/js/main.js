@@ -452,6 +452,7 @@ function getElevator(gridX, gridY) {
         }
     }
     //populateElevators();
+    enterElevatorMode = false;
     console.log(elevatorArray);
     Controller.rest();
     return;
@@ -691,6 +692,10 @@ prev_floor_btn.onclick = function() {
         if (floorArray[current_floor].storeInfo) {
             storeArray = floorArray[current_floor].storeInfo;
         }
+        if (floorArray[current_floor].imageInfo) {
+            imgArray = floorArray[current_floor].imageInfo;
+        }
+
 
         Controller.clearOperations();
         Controller.clearAll();
@@ -737,6 +742,10 @@ next_floor_btn.onclick = function() {
         if (floorArray[current_floor].storeInfo) {
             storeArray = floorArray[current_floor].storeInfo;
         }
+        if (floorArray[current_floor].imageInfo) {
+            imgArray = floorArray[current_floor].imageInfo;
+        }
+
 
         Controller.clearOperations();
         Controller.clearAll();
