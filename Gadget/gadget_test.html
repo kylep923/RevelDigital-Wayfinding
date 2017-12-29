@@ -199,7 +199,7 @@
         readInStores();
         loadImage("https://uploads.cdn.reveldigital.com/378782!start24.png", "start");
         loadImage("https://uploads.cdn.reveldigital.com/378781!end24.png", "end");
-        loadImage("", "elevator");
+        loadImage("https://uploads.cdn.reveldigital.com/381020!elevator.png", "elevator");
     }
 
     function loadImage(imgURL, imgID) {
@@ -418,11 +418,11 @@
         lastPath.push(path);
         if (drawEnd == true) {
             drawStartEnd(startPoint, endPoint);
-        } else {
-            drawStartElevator(startPoint.endPoint);
         }
-
-        if (floor > 1) {
+        if (drawEnd == false && floor == 0) {
+            drawStartElevator(startPoint, endPoint);
+        }
+        if (floor > 0) {
             drawElevatorEnd(startPoint, endPoint);
         }
     }
