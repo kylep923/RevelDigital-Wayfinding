@@ -110,6 +110,7 @@
 
 <body>
     <script type="text/javascript" src="slick/slick.min.js"></script>
+    <h1 id="floorHeader">Floor 1</h1>
     <div id="my-slider" class="my-slider">
         <!--
         <div id="img_container" class="floatTL"></div>
@@ -132,10 +133,8 @@
         $('.my-slider').slick({
             slidesToShow: 1,
             slidesToScroll: 1,
-            dots: true,
             arrows: true,
             infinite: false,
-            adaptiveHeight: true
         })
     });
 
@@ -153,6 +152,8 @@
     var canvas_container = document.getElementById("canvas_container");
 
     var numFloors = 0;
+    var changesDone = false;
+    var changeFloor = false;
 
     //var lastStartPath;
     //var lastEndPath;
@@ -170,15 +171,27 @@
 
     //var prefs = new gadgets.Prefs();
     var width = $(window).width() - ($(window).width() * .05); //prefs.getString("rdW");
-    var height = $(window).height() - ($(window).height() * .05); //prefs.getString("rdH");
+    var height = $(window).height() - ($(window).height() * .125); //prefs.getString("rdH");
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
-    var BuildingName = "test4";
+    var BuildingName = "test3";
     var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
         //paper.setup('myCanvas');
         onLoad();
     };
+
+    $('.my-slider').on('afterChange', function(event, slick, currentSlide, nextSlide) {
+        console.log(currentSlide);
+        var curr_floor_num = parseInt($(".slick-slide.slick-current.slick-active")[0].dataset.slickIndex) + 1;
+        console.log(curr_floor_num);
+        document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+        if (curr_floor_num > 1) {
+            changesDone = true;
+        }
+        // left
+    });
+
     // This function is called after the gadget has been initialized.
     function onLoad() {
         readInData();
@@ -220,7 +233,7 @@
     }
 
     function removeLastPath() {
-        console.log(DATA.length);
+        //console.log(DATA.length);
         if (lastPath != []) {
             for (var x = 0; x < lastPath.length; x++) {
                 console.log(lastPath);
@@ -239,7 +252,7 @@
 
     function generatePath(storeName) {
         removeLastPath();
-        var counter = 0;
+        $('.my-slider').slick('slickGoTo', 0);
 
         var toX;
         var toY;
@@ -253,16 +266,22 @@
         }, this);
 
         if (START.floor == toFloor) {
-            console.log(START.floor);
-            console.log(toFloor);
+            //console.log(START.floor);
+            //console.log(toFloor);
+            $(".my-slider").slick("slickUnfilter");
             //for (var x = 2; x <= numFloors; x++) {
-            //console.log(x);
-            //$(".my-slider").slick("slickUnfilter");
-            //$(".my-slider").slick("slickFilter", "floor_" + x + "_slide");
+            //    console.log(x);
+            $(".my-slider").slick("slickFilter", "#floor_" + toFloor + "_slide");
+            //    //$(".my-slider").slick("slickUnfilter");
             //}
+        } else {
+            $(".my-slider").slick("slickUnfilter");
+            $(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide, #floor_" + toFloor + "_slide");
+            //$(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide");
         }
 
         var pathArray = [];
+        var pathObj = {};
 
         for (var x = 0; x < ELEVATORS.length; x++) {
             for (var y = 0; y < ELEVATORS[x].floorAccess.length; y++) {
@@ -270,66 +289,63 @@
                 if (START.floor == ELEVATORS[x].floorAccess[y].floor && toFloor != START.floor) {
                     path = getPath(START.x, START.y, ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, START.floor);
                     pathArray.push(path);
-                    drawPath(path, START.floor);
+                    pathObj[START.floor] = path;
+                    //drawPath(path, START.floor);
                 }
                 if (ELEVATORS[x].floorAccess[y].floor == toFloor && toFloor != START.floor) {
                     path = getPath(ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, toX, toY, toFloor);
                     pathArray.push(path);
-                    drawPath(path, toFloor);
-                    /*
-                    setTimeout(function() {
+                    pathObj[toFloor] = path;
+                    //setTimeout(function() {
+                    //$('.my-slider').slick('slickGoTo', 1);
+                    //drawPath(path, toFloor);
 
-                        removeLastPath();
+                    // }, 3000);
+                    // setTimeout(function() {
+                    //drawPath(path, toFloor);
+                    //  }, 4000)
 
-                        hidefloors(toFloor);
-                        TweenMax.to("#floor" + toFloor, 2, {
-                            x: 0,
-                            onComplete: myFunction
-                        });
-
-                        function myFunction() {
-                            drawPath(path, toFloor);
-                        }
-                    }, 3000);
-                    setTimeout(function() {
-
-                        removeLastPath();
-
-                        TweenMax.to("#floor1", 2, {
-                            x: 0,
-                        });
-                        hidefloors(1);
-
-                    }, 10000);
-                    */
                 }
                 if (START.floor == toFloor) {
                     path = getPath(START.x, START.y, toX, toY, toFloor);
                     pathArray.push(path);
+                    pathObj[START.floor] = path;
 
-                    drawPath(path, START.floor);
-
+                    //drawPath(path, START.floor);
                 }
-                console.log(ELEVATORS[x].floorAccess[y]);
+                //console.log(ELEVATORS[x].floorAccess[y]);
             }
+        }
+        console.log(Object.keys(pathObj).length);
+
+        if (Object.keys(pathObj).length > 1) {
+            drawPath(pathObj[START.floor], START.floor, function() {
+                //setTimeout(function() {
+                drawPath(pathObj[toFloor], toFloor)
+                    //}, 2000);
+            });
+        } else {
+            drawPath(pathObj[START.floor], START.floor);
         }
         //lastPath = pathArray;
     }
 
+    function alertWhenDone(msg, callback) {
+        console.log(msg);
+        callback();
+    }
 
-    function drawPath(path, floor) {
 
+    function drawPath(path, floor, callback) {
+        changesDone = false;
         // setting up canvas to be drawn on and setting it as active.
         var canvas_1 = document.getElementById(floor);
         scope.setup(canvas_1);
         var view_1 = scope.View._viewsById[floor];
-        console.log(view_1);
         view_1._project.activate();
-
         floor = floor - 1;
-
         data = path;
-        console.log(data);
+
 
         scaleX = ((width / DATA[floor].scaleInfo.imgWidth) * DATA[floor].scaleInfo.tileSize);
         scaleY = ((height / DATA[floor].scaleInfo.imgHeight) * DATA[floor].scaleInfo.tileSize);
@@ -340,11 +356,14 @@
         var startY;
         var endX;
         var endY;
-
+        var amount = 5;
+        currentTime = 0;
         var path = new Path();
-        path.strokeColor = 'red';
+        path.strokeColor = new Color(.5, .5, 1);
+        //path.strokeColor.alpha = 0;
         path.strokeWidth = 3;
-        path.dashArray = [10, 5];
+        var pointArray = [];
+        //path.dashArray = [10, 5];
         data.forEach(function(element) {
             if (element == data[0]) {
                 startPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY + -12);
@@ -352,10 +371,44 @@
             if (element == data[data.length - 1]) {
                 endPoint = new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY + -12);
             }
-            path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            //path.add(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
+            pointArray.push(new Point((element[0] * scaleX) + adjX, (element[1] * scaleY) + adjY));
         }, this);
+        //console.log(pointArray);
+        var ct = 0;
+        var flag = pointArray.length;
         path.onFrame = function(event) {
-            path.strokeColor.hue += 1;
+            // Change the y position of the segment point:
+            let time = Math.floor(event.time);
+            if (pointArray.length > 0) {
+                currentTime = time;
+                //console.log('path', segment.path);
+                setTimeout(function() {
+                    if (pointArray[0]) {
+                        path.add(pointArray[0]);
+
+                        //console.log(pointArray[0]);
+                        pointArray.splice(0, 1);
+                        flag--;
+                    }
+                }, 500);
+                //segment.path.strokeColor = new Color(Math.abs(sinus), Math.abs(sinus), Math.abs(sinus))
+            }
+            if (flag == 0 && callback && typeof(callback) === "function") {
+                flag = -1;
+                console.log(flag);
+                setTimeout(function() {
+                    console.log("Wait here!")
+                    $('.my-slider').slick('slickGoTo', 1);
+                }, 1000);
+            }
+            if (flag == -1 && callback && typeof(callback) === "function" && changesDone == true) {
+                flag = -2;
+                console.log("drawing");
+                //setTimeout(function() {
+                callback();
+                //}, 1000);
+            }
         }
         path.smooth();
         lastPath.push(path);
@@ -417,6 +470,7 @@
                     console.log(DATA[x]);
                     loadGrid();
                 }
+                $(".my-slider").slick("slickFilter", "#floor_1_slide");
             }
             //hidefloors(1);
         });
