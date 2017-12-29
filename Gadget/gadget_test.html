@@ -124,6 +124,7 @@
     <div id="btnContainer">
         <img id="start" class="visuallyhidden" src="" width="24" height="24">
         <img id="end" class="visuallyhidden" src="" width="24" height="24">
+        <img id="elevator" class="visuallyhidden" src="" width="24" height="24">
     </div>
     </div>
 </body>
@@ -198,6 +199,7 @@
         readInStores();
         loadImage("https://uploads.cdn.reveldigital.com/378782!start24.png", "start");
         loadImage("https://uploads.cdn.reveldigital.com/378781!end24.png", "end");
+        loadImage("", "elevator");
     }
 
     function loadImage(imgURL, imgID) {
@@ -319,13 +321,17 @@
         console.log(Object.keys(pathObj).length);
 
         if (Object.keys(pathObj).length > 1) {
-            drawPath(pathObj[START.floor], START.floor, function() {
+            drawPath(pathObj[START.floor], START.floor, false, function() {
                 //setTimeout(function() {
-                drawPath(pathObj[toFloor], toFloor)
+                drawPath(pathObj[toFloor], toFloor, false, function() {
+                        setTimeout(function() {
+                            $('.my-slider').slick('slickGoTo', 0);
+                        }, 1000);
+                    })
                     //}, 2000);
             });
         } else {
-            drawPath(pathObj[START.floor], START.floor);
+            drawPath(pathObj[START.floor], START.floor, true);
         }
         //lastPath = pathArray;
     }
@@ -336,7 +342,7 @@
     }
 
 
-    function drawPath(path, floor, callback) {
+    function drawPath(path, floor, drawEnd, callback) {
         changesDone = false;
         // setting up canvas to be drawn on and setting it as active.
         var canvas_1 = document.getElementById(floor);
@@ -386,8 +392,6 @@
                 setTimeout(function() {
                     if (pointArray[0]) {
                         path.add(pointArray[0]);
-
-                        //console.log(pointArray[0]);
                         pointArray.splice(0, 1);
                         flag--;
                     }
@@ -412,12 +416,38 @@
         }
         path.smooth();
         lastPath.push(path);
-        drawStartEnd(startPoint, endPoint);
+        if (drawEnd == true) {
+            drawStartEnd(startPoint, endPoint);
+        } else {
+            drawStartElevator(startPoint.endPoint);
+        }
+
+        if (floor > 1) {
+            drawElevatorEnd(startPoint, endPoint);
+        }
     }
 
 
     function drawStartEnd(sp, ep) {
         var start = new Raster("start");
+        start.position = sp;
+        var end = new Raster("end");
+        end.position = ep;
+        lastEndIcon.push(end);
+        lastEndIcon.push(start);
+    }
+
+    function drawStartElevator(sp, ep) {
+        var start = new Raster("start");
+        start.position = sp;
+        var end = new Raster("elevator");
+        end.position = ep;
+        lastEndIcon.push(end);
+        lastEndIcon.push(start);
+    }
+
+    function drawElevatorEnd(sp, ep) {
+        var start = new Raster("elevator");
         start.position = sp;
         var end = new Raster("end");
         end.position = ep;
