@@ -123,7 +123,7 @@
 </head>
 
 <body>
-    <script type="text/javascript" src="https://raw.githubusercontent.com/kylep923/RevelDigital-Wayfinding/gadget-updates/Gadget/slick/slick.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/kylep923/RevelDigital-Wayfinding/gadget-updates/Gadget/slick/slick.min.js"></script>
     <h1 id="floorHeader">Floor 1</h1>
     <div id="my-slider" class="my-slider">
         <!--
