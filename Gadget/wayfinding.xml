@@ -487,7 +487,7 @@
     //------------------------------------------------------------
 
     function readInData() {
-        var building_name = BuildingName; //prefs.getString("dataName");
+        var building_name =prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
             var obj = JSON.parse(building.floorGrids);
@@ -523,7 +523,7 @@
 
 
     function readInStores() {
-        var building_name = BuildingName; //prefs.getString("dataName");
+        var building_name = prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
             var obj = JSON.parse(building.floorGrids);
