@@ -14,6 +14,7 @@
 </ModulePrefs>
 <Content type="html">
 <![CDATA[
+<html>
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/kylep923/RevelDigital-Wayfinding/gadget-updates/Gadget/slick/slick.css" />
@@ -608,6 +609,7 @@
 
     gadgets.util.registerOnLoadHandler(onLoad);
 </script>
+</html>
 ]]>
 </Content>
 </Module>
