@@ -193,10 +193,11 @@
     var api_key = prefs.getString("apiKey");
     var showButtons = prefs.getBool("showButtons");
     paper.install(window);
-    window.onload = function() {
+
+    //window.onload = function() {
         //paper.setup('myCanvas');
         //onLoad();
-    };
+    //};
 
     $('.my-slider').on('afterChange', function(event, slick, currentSlide, nextSlide) {
         console.log(currentSlide);
