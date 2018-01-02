@@ -188,7 +188,7 @@
     var width = prefs.getString("rdW");
     width = width * .95;
     var height = prefs.getString("rdH");
-    height = height * 875
+    height = height * .875;
     var api_key = prefs.getString("apiKey");
     var showButtons = prefs.getBool("showButtons");
      paper.install(window);
