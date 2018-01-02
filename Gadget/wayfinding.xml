@@ -144,6 +144,7 @@
 </body>
 
 <script type="text/javascript">
+    console.log("INSIDE SCRIPT");
     $(document).ready(function() {
         $('.my-slider').slick({
             slidesToShow: 1,
@@ -191,10 +192,10 @@
     height = height * .875;
     var api_key = prefs.getString("apiKey");
     var showButtons = prefs.getBool("showButtons");
-     paper.install(window);
+    paper.install(window);
     window.onload = function() {
         //paper.setup('myCanvas');
-        onLoad();
+        //onLoad();
     };
 
     $('.my-slider').on('afterChange', function(event, slick, currentSlide, nextSlide) {
