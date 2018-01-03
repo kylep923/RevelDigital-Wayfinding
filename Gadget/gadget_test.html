@@ -3,10 +3,11 @@
 
 <meta charset="UTF-8">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/css/swiper.min.css">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/pathfinding-browser.min.js" type="text/javascript"></script>
 <script src="https://reveldigital.github.io/reveldigital-gadgets/third-party/paper-core.min.js" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script>
     // Initialize Firebase
@@ -103,301 +104,18 @@
     body {
         background-color: gray;
     }
-    /* Slider */
-    
-    .slick-slider {
-        position: relative;
-        display: block;
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-touch-callout: none;
-        -khtml-user-select: none;
-        -ms-touch-action: pan-y;
-        touch-action: pan-y;
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .slick-list {
-        position: relative;
-        display: block;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .slick-list:focus {
-        outline: none;
-    }
-    
-    .slick-list.dragging {
-        cursor: pointer;
-        cursor: hand;
-    }
-    
-    .slick-slider .slick-track,
-    .slick-slider .slick-list {
-        -webkit-transform: translate3d(0, 0, 0);
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-    }
-    
-    .slick-track {
-        position: relative;
-        top: 0;
-        left: 0;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .slick-track:before,
-    .slick-track:after {
-        display: table;
-        content: '';
-    }
-    
-    .slick-track:after {
-        clear: both;
-    }
-    
-    .slick-loading .slick-track {
-        visibility: hidden;
-    }
-    
-    .slick-slide {
-        display: none;
-        float: left;
-        height: auto;
-        min-height: 1px;
-    }
-    
-    [dir='rtl'] .slick-slide {
-        float: right;
-    }
-    
-    .slick-slide img {
-        display: block;
-    }
-    
-    .slick-slide.slick-loading img {
-        display: none;
-    }
-    
-    .slick-slide.dragging img {
-        pointer-events: none;
-    }
-    
-    .slick-initialized .slick-slide {
-        display: block;
-    }
-    
-    .slick-loading .slick-slide {
-        visibility: hidden;
-    }
-    
-    .slick-vertical .slick-slide {
-        display: block;
-        height: auto;
-        border: 1px solid transparent;
-    }
-    
-    .slick-arrow.slick-hidden {
-        display: none;
-    }
-    
-    .slick-loading .slick-list {
-        background: #fff url('./ajax-loader.gif') center center no-repeat;
-    }
-    /* Icons */
-    
-    @font-face {
-        font-family: 'slick';
-        font-weight: normal;
-        font-style: normal;
-        src: url('./fonts/slick.eot');
-        /* -- THESE LINKS NEED TO BE FIXED --- */
-        src: url('./fonts/slick.eot?#iefix') format('embedded-opentype'), url('./fonts/slick.woff') format('woff'), url('./fonts/slick.ttf') format('truetype'), url('./fonts/slick.svg#slick') format('svg');
-    }
-    /* Arrows */
-    
-    .slick-prev,
-    .slick-next {
-        font-size: 0;
-        line-height: 0;
-        position: absolute;
-        top: 50%;
-        display: block;
-        width: 20px;
-        height: 20px;
-        padding: 0;
-        -webkit-transform: translate(0, -50%);
-        -ms-transform: translate(0, -50%);
-        transform: translate(0, -50%);
-        cursor: pointer;
-        color: transparent;
-        border: none;
-        outline: none;
-        background: transparent;
-    }
-    
-    .slick-prev:hover,
-    .slick-prev:focus,
-    .slick-next:hover,
-    .slick-next:focus {
-        color: transparent;
-        outline: none;
-        background: transparent;
-    }
-    
-    .slick-prev:hover:before,
-    .slick-prev:focus:before,
-    .slick-next:hover:before,
-    .slick-next:focus:before {
-        opacity: 1;
-    }
-    
-    .slick-prev.slick-disabled:before,
-    .slick-next.slick-disabled:before {
-        opacity: .25;
-    }
-    
-    .slick-prev:before,
-    .slick-next:before {
-        font-family: 'slick';
-        font-size: 20px;
-        line-height: 1;
-        opacity: .75;
-        color: white;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    
-    .slick-prev {
-        left: -25px;
-    }
-    
-    [dir='rtl'] .slick-prev {
-        right: -25px;
-        left: auto;
-    }
-    
-    .slick-prev:before {
-        content: '←';
-    }
-    
-    [dir='rtl'] .slick-prev:before {
-        content: '→';
-    }
-    
-    .slick-next {
-        right: -25px;
-    }
-    
-    [dir='rtl'] .slick-next {
-        right: auto;
-        left: -25px;
-    }
-    
-    .slick-next:before {
-        content: '→';
-    }
-    
-    [dir='rtl'] .slick-next:before {
-        content: '←';
-    }
-    /* Dots */
-    
-    .slick-dotted.slick-slider {
-        margin-bottom: 30px;
-    }
-    
-    .slick-dots {
-        position: absolute;
-        bottom: -25px;
-        display: block;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        list-style: none;
-        text-align: center;
-    }
-    
-    .slick-dots li {
-        position: relative;
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        margin: 0 5px;
-        padding: 0;
-        cursor: pointer;
-    }
-    
-    .slick-dots li button {
-        font-size: 0;
-        line-height: 0;
-        display: block;
-        width: 20px;
-        height: 20px;
-        padding: 5px;
-        cursor: pointer;
-        color: transparent;
-        border: 0;
-        outline: none;
-        background: transparent;
-    }
-    
-    .slick-dots li button:hover,
-    .slick-dots li button:focus {
-        outline: none;
-    }
-    
-    .slick-dots li button:hover:before,
-    .slick-dots li button:focus:before {
-        opacity: 1;
-    }
-    
-    .slick-dots li button:before {
-        font-family: 'slick';
-        font-size: 6px;
-        line-height: 20px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 20px;
-        height: 20px;
-        content: '•';
-        text-align: center;
-        opacity: .25;
-        color: black;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    
-    .slick-dots li.slick-active button:before {
-        opacity: .75;
-        color: black;
-    }
 </style>
 
 
 <body>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <h1 id="floorHeader">Floor 1</h1>
-    <div id="my-slider" class="my-slider">
-        <!--
-            <script type="text/javascript" src="slick/slick.min.js"></script>
-        <div id="img_container" class="floatTL"></div>
-
-        <div id="canvas_container" class="floatTLcanvas">
-             <canvas id="myCanvas" resize="true"></canvas>
-        -->
-
+    <div id="my-slider" class="swiper-container">
+        <div class="swiper-wrapper">
+            <!-- Add Slides here -->
+        </div>
+        <!-- Add Arrows -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
     </div>
 
     <div id="btnContainer">
@@ -408,14 +126,13 @@
     </div>
 </body>
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/js/swiper.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('.my-slider').slick({
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: true,
-            infinite: false,
-        })
+    var swiper = new Swiper('.swiper-container', {
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
     });
 
     var DATA = []; //Array of the grids for each floor
@@ -450,7 +167,7 @@
     var scope = new paper.PaperScope();
 
     //var prefs = new gadgets.Prefs();
-    var width = $(window).width() - ($(window).width() * .05); //prefs.getString("rdW");
+    var width = $(window).width(); //prefs.getString("rdW");
     var height = $(window).height() - ($(window).height() * .125); //prefs.getString("rdH");
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
     var BuildingName = "test3";
@@ -460,12 +177,14 @@
         //paper.setup('myCanvas');
         onLoad();
     };
-
-    $('.my-slider').on('afterChange', function(event, slick, currentSlide, nextSlide) {
-        console.log(currentSlide);
-        var curr_floor_num = parseInt($(".slick-slide.slick-current.slick-active")[0].dataset.slickIndex) + 1;
-        console.log(curr_floor_num);
+    // ------ FIX THIS --------
+    swiper.on('slideChange', function() {
+        console.log(swiper.activeIndex);
+        var curr_floor_num = swiper.activeIndex + 1
+            //console.log(curr_floor_num);
         document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+        swiper.update();
+
         if (curr_floor_num > 1) {
             changesDone = true;
         }
@@ -488,6 +207,8 @@
             image.src = this.src;
         }
         downloadingimage.src = imgURL;
+        swiper.update();
+
     }
 
     function populateButtons(items) {
@@ -497,6 +218,7 @@
                 generatePath(element.name);
             });
             $("#btnContainer").append(btn);
+            swiper.update();
 
         }, this);
     }
@@ -528,12 +250,15 @@
 
             }
             lastEndIcon = [];
+            swiper.update();
+
         }
     }
 
     function generatePath(storeName) {
         removeLastPath();
-        $('.my-slider').slick('slickGoTo', 0);
+        // --- FIX THIS ---
+        swiper.slideTo(0);
 
         var toX;
         var toY;
@@ -546,19 +271,33 @@
             }
         }, this);
 
+        for (var x = 2; x <= numFloors; x++) {
+            document.getElementById("floor_" + x + "_slide").style.display = "block";
+            swiper.update();
+        }
+
         if (START.floor == toFloor) {
-            //console.log(START.floor);
-            //console.log(toFloor);
-            $(".my-slider").slick("slickUnfilter");
-            //for (var x = 2; x <= numFloors; x++) {
-            //    console.log(x);
-            $(".my-slider").slick("slickFilter", "#floor_" + toFloor + "_slide");
-            //    //$(".my-slider").slick("slickUnfilter");
-            //}
+            // --- FIX THIS ---
+            //$(".my-slider").slick("slickUnfilter");
+
+            // --- FIX THIS ---
+            //$(".my-slider").slick("slickFilter", "#floor_" + toFloor + "_slide");
+            for (var x = 2; x <= numFloors; x++) {
+                document.getElementById("floor_" + x + "_slide").style.display = "none";
+                swiper.update();
+            }
+
         } else {
-            $(".my-slider").slick("slickUnfilter");
-            $(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide, #floor_" + toFloor + "_slide");
-            //$(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide");
+            // --- FIX THIS ---
+            //$(".my-slider").slick("slickUnfilter");
+            //$(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide, #floor_" + toFloor + "_slide");
+            for (var x = 2; x <= numFloors; x++) {
+                if (x != toFloor) {
+                    document.getElementById("floor_" + x + "_slide").style.display = "none";
+                    swiper.update();
+                }
+            }
+
         }
 
         var pathArray = [];
@@ -577,14 +316,6 @@
                     path = getPath(ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, toX, toY, toFloor);
                     pathArray.push(path);
                     pathObj[toFloor] = path;
-                    //setTimeout(function() {
-                    //$('.my-slider').slick('slickGoTo', 1);
-                    //drawPath(path, toFloor);
-
-                    // }, 3000);
-                    // setTimeout(function() {
-                    //drawPath(path, toFloor);
-                    //  }, 4000)
 
                 }
                 if (START.floor == toFloor) {
@@ -604,7 +335,7 @@
                 //setTimeout(function() {
                 drawPath(pathObj[toFloor], toFloor, false, function() {
                         setTimeout(function() {
-                            $('.my-slider').slick('slickGoTo', 0);
+                            swiper.slideTo(0);
                         }, 1000);
                     })
                     //}, 2000);
@@ -672,6 +403,7 @@
                     if (pointArray[0]) {
                         path.add(pointArray[0]);
                         pointArray.splice(0, 1);
+                        swiper.update();
                         flag--;
                     }
                 }, 500);
@@ -679,10 +411,15 @@
             }
             if (flag == 0 && callback && typeof(callback) === "function") {
                 flag = -1;
-                console.log(flag);
+                console.log(floor);
                 setTimeout(function() {
                     console.log("Wait here!")
-                    $('.my-slider').slick('slickGoTo', 1);
+                        // --- FIX THIS ---
+                    if (floor + 1 > 1) {
+                        swiper.slideTo(0);
+                    } else {
+                        swiper.slideTo(floor + 1);
+                    }
                 }, 1000);
             }
             if (flag == -1 && callback && typeof(callback) === "function" && changesDone == true) {
@@ -704,6 +441,7 @@
         if (floor > 0) {
             drawElevatorEnd(startPoint, endPoint);
         }
+        swiper.update();
     }
 
 
@@ -714,6 +452,7 @@
         end.position = ep;
         lastEndIcon.push(end);
         lastEndIcon.push(start);
+        swiper.update();
     }
 
     function drawStartElevator(sp, ep) {
@@ -723,6 +462,7 @@
         end.position = ep;
         lastEndIcon.push(end);
         lastEndIcon.push(start);
+        swiper.update();
     }
 
     function drawElevatorEnd(sp, ep) {
@@ -732,6 +472,7 @@
         end.position = ep;
         lastEndIcon.push(end);
         lastEndIcon.push(start);
+        swiper.update();
     }
 
     function getPath(fromX, fromY, toX, toY, floor) {
@@ -779,7 +520,9 @@
                     console.log(DATA[x]);
                     loadGrid();
                 }
-                $(".my-slider").slick("slickFilter", "#floor_1_slide");
+                // --- FIX THIS ---
+                //swiper.slideTo(0);
+                swiper.update();
             }
             //hidefloors(1);
         });
@@ -812,49 +555,38 @@
         });
     }
 
-    function sliderInit() {
-        $('.my-slider').slick({
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: true
-        });
-    };
 
     //------------------------------------------------------------
     // FUNCTIONS  FOR LOADING IMAGES HERE
     //------------------------------------------------------------
     function loadGrid() {
+        swiper.appendSlide("<div id=floor_" + numFloors + "_slide class='swiper-slide'></div>");
 
-        var slide_container = document.createElement("DIV");
-        //var img_container = document.createElement("DIV");
+        var slide_container = document.getElementById("floor_" + numFloors + "_slide");
         var canvas_container = document.createElement("DIV");
 
-        //img_container.setAttribute("id", "img_container_" + numFloors);
-        //$("#img_container" + numFloors).addClass("floatTL");
-        slide_container.setAttribute("id", "floor_" + numFloors + "_slide");
+        //slide_container.setAttribute("id", "floor_" + numFloors + "_slide");
+        //$("#floor_" + numFloors + "_slide").addClass(".swiper-slide");
         canvas_container.setAttribute("id", "canvas_container_" + numFloors);
-        $("#canvas_container" + numFloors).addClass("floatTLcanvas");
+        $("#canvas_container" + numFloors).addClass(".floatTLcanvas");
 
-        //slide_container.appendChild(img_container);
         slide_container.appendChild(canvas_container);
-
 
         var image = document.createElement("IMG");
         var canvas = document.createElement("canvas");
 
         canvas.setAttribute("id", numFloors);
         canvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: url('" + imgArray[0] + "'); background-size:" + width + "px " + height + "px;");
-        //image.setAttribute("id", "floor" + numFloors);
 
-
-        //img_container.appendChild(image);
         canvas_container.appendChild(canvas);
 
         $("#" + numFloors).addClass("myCanvas");
         canvas = document.getElementById("'" + numFloors + "'")
         scope.setup(canvas);
 
-        $('.my-slider').slick('slickAdd', slide_container);
+        console.log(canvas_container);
+
+        swiper.update();
 
     }
 
