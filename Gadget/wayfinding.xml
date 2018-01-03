@@ -4,7 +4,7 @@
   <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
   <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value="" required="true"/>
   <UserPref name="pathColor" display_name="Path Color (hex value)" datatype="string" default_value="#42f4c5"/>
-  <UserPref name="pathWidth" display_name="Path Width (integer value" datatype="string" default_value="3"/>
+  <UserPref name="pathWidth" display_name="Path Width (integer value)" datatype="string" default_value="3"/>
   <UserPref name="showButtons" display_name="Show Buttons?" datatype="bool" default_value="true"/>
      
   <!-- The following preferences should not be modified -->
@@ -121,7 +121,7 @@
     
     .swiper-container {
         width: __UP_rdW__px;
-        height: (__UP_rdH__ * .93) px;
+        height: __UP_rdH__px;
     }
 </style>
 
@@ -186,6 +186,7 @@
     var width = prefs.getString("rdW");
     var height = prefs.getString("rdH");
     height = height * .875;
+    document.getElementById("my-slider").style.height = height;
     var api_key = prefs.getString("apiKey");
 
     var pathColor = prefs.getString("pathColor");
