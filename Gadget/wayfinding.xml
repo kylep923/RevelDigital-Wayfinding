@@ -121,7 +121,7 @@
     
     .swiper-container {
         width: __UP_rdW__px;
-        height:__UP_rdH__px;
+        height: (__UP_rdH__ * .93) px;
     }
 </style>
 
