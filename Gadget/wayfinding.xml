@@ -186,7 +186,7 @@
     var width = prefs.getString("rdW");
     var height = prefs.getString("rdH");
     height = height * .875;
-    document.getElementById("my-slider").style.height = height;
+    document.getElementById("my-slider").style.height = height + "px";
     var api_key = prefs.getString("apiKey");
 
     var pathColor = prefs.getString("pathColor");

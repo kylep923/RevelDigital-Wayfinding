@@ -107,7 +107,7 @@
     
     .swiper-container {
         width: 100%;
-        height: 100%;
+        height: calc(100% - 7%);
     }
 </style>
 
@@ -174,7 +174,7 @@
     //var prefs = new gadgets.Prefs();
     var width = $(window).width(); //prefs.getString("rdW");
     var height = $(window).height() - ($(window).height() * .125); //prefs.getString("rdH");
-    document.getElementById("my-slider").style.height = height;
+    document.getElementById("my-slider").style.height = height + "px";
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
     var BuildingName = "test3";
     var showButtons = true; //prefs.getString("showButtons");
