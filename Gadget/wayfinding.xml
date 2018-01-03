@@ -568,6 +568,7 @@
         swiper.appendSlide("<div id=floor_" + numFloors + "_slide class='swiper-slide'></div>");
 
         var slide_container = document.getElementById("floor_" + numFloors + "_slide");
+        slide_container.setAttribute("style", "width: " + width + "px; height: " + height);
         var canvas_container = document.createElement("DIV");
 
         //slide_container.setAttribute("id", "floor_" + numFloors + "_slide");
