@@ -2,7 +2,9 @@
 <Module> 
 <ModulePrefs title="Wayfinding Gadget" description="" author="Revel Digital" background="transparent">
   <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
-  <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value=""/>
+  <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value="" required="true"/>
+  <UserPref name="pathColor" display_name="Path Color (hex value)" datatype="string" default_value="#42f4c5"/>
+  <UserPref name="pathWidth" display_name="Path Width (integer value" datatype="string" default_value="3"/>
   <UserPref name="showButtons" display_name="Show Buttons?" datatype="bool" default_value="true"/>
      
   <!-- The following preferences should not be modified -->
@@ -185,6 +187,10 @@
     var height = prefs.getString("rdH");
     height = height * .875;
     var api_key = prefs.getString("apiKey");
+
+    var pathColor = prefs.getString("pathColor");
+    var pathWidth = prefs.getString("pathWidth");
+
     var showButtons = prefs.getBool("showButtons");
     paper.install(window);
 
