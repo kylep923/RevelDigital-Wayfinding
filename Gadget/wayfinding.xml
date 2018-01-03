@@ -79,17 +79,18 @@
     
     #btnContainer {
         position: absolute;
-        height: 100%;
-        width: 10%;
+        height: 10%;
+        width: 100%;
         right: 0;
-        top: 0;
+        bottom: 0;
         overflow: hidden;
         z-index: 50;
     }
     
     button {
-        width: 95%;
-        height: 50px;
+        width: 100px;
+        height: 50%;
+        bottom: 5px;
     }
     
     .myCanvas {
@@ -102,7 +103,6 @@
     }
     
     .store-btn {
-        margin: 3%;
         font-size: 1.2em;
         border: 2px solid;
         border-radius: 10px;
@@ -116,12 +116,11 @@
     body {
         background-color: gray;
     }
-
+    
     .swiper-container {
-        width: __UP_rdW__px;
-	    height: __UP_rdH__px;
+        width: 100%;
+        height: 93%;
     }
-
 </style>
 
 <h1 id="floorHeader">Floor 1</h1>
@@ -163,6 +162,7 @@
     var canvas_container = document.getElementById("canvas_container");
 
     var numFloors = 0;
+    var curr_floor_num = 1;
     var changesDone = false;
     var changeFloor = false;
 
@@ -182,21 +182,25 @@
 
     var prefs = new gadgets.Prefs();
     var width = prefs.getString("rdW");
-    width = width * .95;
     var height = prefs.getString("rdH");
     height = height * .875;
     var api_key = prefs.getString("apiKey");
     var showButtons = prefs.getBool("showButtons");
     paper.install(window);
 
-    swiper.on('slideChange', function() {
+        swiper.on('slideChange', function() {
         console.log(swiper.activeIndex);
-        var curr_floor_num = swiper.activeIndex + 1
-            //console.log(curr_floor_num);
-        document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+        var curr_slide_index = swiper.activeIndex;
+
+        if (curr_slide_index > 0) {
+            document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+        } else if (curr_slide_index == 0) {
+            document.getElementById("floorHeader").innerText = "Floor " + 1;
+        }
         swiper.update();
 
-        if (curr_floor_num > 1) {
+
+        if (curr_slide_index > 1) {
             changesDone = true;
         }
         // left
@@ -268,7 +272,6 @@
 
     function generatePath(storeName) {
         removeLastPath();
-        // --- FIX THIS ---
         swiper.slideTo(0);
 
         var toX;
@@ -282,26 +285,21 @@
             }
         }, this);
 
+        curr_floor_num = toFloor;
+        console.log(toFloor);
+
         for (var x = 2; x <= numFloors; x++) {
             document.getElementById("floor_" + x + "_slide").style.display = "block";
             swiper.update();
         }
 
         if (START.floor == toFloor) {
-            // --- FIX THIS ---
-            //$(".my-slider").slick("slickUnfilter");
-
-            // --- FIX THIS ---
-            //$(".my-slider").slick("slickFilter", "#floor_" + toFloor + "_slide");
             for (var x = 2; x <= numFloors; x++) {
                 document.getElementById("floor_" + x + "_slide").style.display = "none";
                 swiper.update();
             }
 
         } else {
-            // --- FIX THIS ---
-            //$(".my-slider").slick("slickUnfilter");
-            //$(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide, #floor_" + toFloor + "_slide");
             for (var x = 2; x <= numFloors; x++) {
                 if (x != toFloor) {
                     document.getElementById("floor_" + x + "_slide").style.display = "none";
@@ -426,10 +424,9 @@
                 setTimeout(function() {
                     console.log("Wait here!")
                         // --- FIX THIS ---
-                    if (floor + 1 > 1) {
-                        swiper.slideTo(0);
-                    } else {
-                        swiper.slideTo(floor + 1);
+                    swiper.slideTo(floor + 1);
+                    if (swiper.activeIndex == 1) {
+                        changesDone = true;
                     }
                 }, 1000);
             }
@@ -503,7 +500,7 @@
     //------------------------------------------------------------
 
     function readInData() {
-        var building_name = prefs.getString("dataName");
+        var building_name = BuildingName; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
             var obj = JSON.parse(building.floorGrids);
@@ -531,8 +528,6 @@
                     console.log(DATA[x]);
                     loadGrid();
                 }
-                // --- FIX THIS ---
-                //swiper.slideTo(0);
                 swiper.update();
             }
             //hidefloors(1);
@@ -541,7 +536,7 @@
 
 
     function readInStores() {
-        var building_name = prefs.getString("dataName");
+        var building_name = BuildingName; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
             var obj = JSON.parse(building.floorGrids);
@@ -574,7 +569,7 @@
         swiper.appendSlide("<div id=floor_" + numFloors + "_slide class='swiper-slide'></div>");
 
         var slide_container = document.getElementById("floor_" + numFloors + "_slide");
-        
+        slide_container.setAttribute("style", "width: " + width + "px; height: " + height);
         var canvas_container = document.createElement("DIV");
 
         //slide_container.setAttribute("id", "floor_" + numFloors + "_slide");
@@ -589,7 +584,6 @@
 
         canvas.setAttribute("id", numFloors);
         canvas.setAttribute("style", "width: " + width + "px; height: " + height + "px; background-image: url('" + imgArray[0] + "'); background-size:" + width + "px " + height + "px;");
-        slide_container.setAttribute("style", "width: " + width + "px; height: " + height);
 
         canvas_container.appendChild(canvas);
 
@@ -599,6 +593,9 @@
 
         console.log(canvas_container);
 
+        if (numFloors > 1) {
+            document.getElementById("floor_" + numFloors + "_slide").style.display = "none";
+        }
         swiper.update();
 
     }

@@ -107,7 +107,7 @@
     
     .swiper-container {
         width: 100%;
-        height: 100%;
+        height: 93%;
     }
 </style>
 
@@ -153,6 +153,7 @@
     var canvas_container = document.getElementById("canvas_container");
 
     var numFloors = 0;
+    var curr_floor_num = 1;
     var changesDone = false;
     var changeFloor = false;
 
@@ -184,12 +185,17 @@
     // ------ FIX THIS --------
     swiper.on('slideChange', function() {
         console.log(swiper.activeIndex);
-        var curr_floor_num = swiper.activeIndex + 1
-            //console.log(curr_floor_num);
-        document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+        var curr_slide_index = swiper.activeIndex;
+
+        if (curr_slide_index > 0) {
+            document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+        } else if (curr_slide_index == 0) {
+            document.getElementById("floorHeader").innerText = "Floor " + 1;
+        }
         swiper.update();
 
-        if (curr_floor_num > 1) {
+
+        if (curr_slide_index > 1) {
             changesDone = true;
         }
         // left
@@ -261,7 +267,6 @@
 
     function generatePath(storeName) {
         removeLastPath();
-        // --- FIX THIS ---
         swiper.slideTo(0);
 
         var toX;
@@ -275,26 +280,21 @@
             }
         }, this);
 
+        curr_floor_num = toFloor;
+        console.log(toFloor);
+
         for (var x = 2; x <= numFloors; x++) {
             document.getElementById("floor_" + x + "_slide").style.display = "block";
             swiper.update();
         }
 
         if (START.floor == toFloor) {
-            // --- FIX THIS ---
-            //$(".my-slider").slick("slickUnfilter");
-
-            // --- FIX THIS ---
-            //$(".my-slider").slick("slickFilter", "#floor_" + toFloor + "_slide");
             for (var x = 2; x <= numFloors; x++) {
                 document.getElementById("floor_" + x + "_slide").style.display = "none";
                 swiper.update();
             }
 
         } else {
-            // --- FIX THIS ---
-            //$(".my-slider").slick("slickUnfilter");
-            //$(".my-slider").slick("slickFilter", "#floor_" + START.floor + "_slide, #floor_" + toFloor + "_slide");
             for (var x = 2; x <= numFloors; x++) {
                 if (x != toFloor) {
                     document.getElementById("floor_" + x + "_slide").style.display = "none";
@@ -340,6 +340,7 @@
                 drawPath(pathObj[toFloor], toFloor, false, function() {
                         setTimeout(function() {
                             swiper.slideTo(0);
+
                         }, 1000);
                     })
                     //}, 2000);
@@ -419,10 +420,9 @@
                 setTimeout(function() {
                     console.log("Wait here!")
                         // --- FIX THIS ---
-                    if (floor + 1 > 1) {
-                        swiper.slideTo(0);
-                    } else {
-                        swiper.slideTo(floor + 1);
+                    swiper.slideTo(floor + 1);
+                    if (swiper.activeIndex == 1) {
+                        changesDone = true;
                     }
                 }, 1000);
             }
@@ -524,8 +524,6 @@
                     console.log(DATA[x]);
                     loadGrid();
                 }
-                // --- FIX THIS ---
-                //swiper.slideTo(0);
                 swiper.update();
             }
             //hidefloors(1);
@@ -591,6 +589,9 @@
 
         console.log(canvas_container);
 
+        if (numFloors > 1) {
+            document.getElementById("floor_" + numFloors + "_slide").style.display = "none";
+        }
         swiper.update();
 
     }
