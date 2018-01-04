@@ -510,7 +510,7 @@
         console.log(offsetX, offsetY);
 
         //var pulse = document.getElementById("pulse");
-        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 54) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
 
         var start = new Raster("start");
         start.position = sp;
@@ -541,7 +541,7 @@
         console.log(offsetX, offsetY);
 
         //var pulse = document.getElementById("pulse");
-        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 54) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
         //console.log(sp.y);
 
         var start = new Raster("elevator");
