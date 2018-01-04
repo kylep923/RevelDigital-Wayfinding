@@ -488,7 +488,7 @@
         path.smooth();
         lastPath.push(path);
         if (drawEnd == true) {
-            drawStartEnd(startPoint, endPoint);
+            drawStartEnd(startPoint, endPoint, floor + 1);
         }
         if (drawEnd == false && floor == 0) {
             drawStartElevator(startPoint, endPoint);
