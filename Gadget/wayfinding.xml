@@ -123,6 +123,31 @@
         width: __UP_rdW__px;
         height: __UP_rdH__px;
     }
+
+    .gps_ring {
+        border: 3px solid #02ffff;
+        -webkit-border-radius: 100px;
+        height: 100px;
+        width: 100px;
+        position: absolute;
+        -webkit-animation: pulsate 1s ease-out;
+        -webkit-animation-iteration-count: infinite;
+        opacity: 0.0
+    }
+    
+    @-webkit-keyframes pulsate {
+        0% {
+            -webkit-transform: scale(0.1, 0.1);
+            opacity: 0.0;
+        }
+        50% {
+            opacity: 1.0;
+        }
+        100% {
+            -webkit-transform: scale(1.2, 1.2);
+            opacity: 0.0;
+        }
+    }
 </style>
 
 <h1 id="floorHeader">Floor 1</h1>
@@ -140,6 +165,7 @@
     <img id="end" class="visuallyhidden" src="" width="24" height="24">
     <img id="elevator" class="visuallyhidden" src="" width="24" height="24">
 </div>
+<div id="pulse" class="gps_ring"></div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/js/swiper.min.js"></script>
 <script type="text/javascript">
@@ -149,6 +175,9 @@
             prevEl: '.swiper-button-prev',
         },
     });
+
+    var pulse = document.getElementById("pulse");
+    pulse.setAttribute("style", "display: none;");
 
     var DATA = []; //Array of the grids for each floor
     var ELEVATORS; //Array of all the elevators. Each elevator contains an array of the locatons on each floor. 
@@ -195,12 +224,21 @@
     var showButtons = prefs.getBool("showButtons");
     paper.install(window);
 
-        swiper.on('slideChange', function() {
+    swiper.on('slideChange', function() {
+        pulse.setAttribute("style", "display: none;");
+    });
+
+    swiper.on('slideChangeTransitionEnd', function() {
         console.log(swiper.activeIndex);
         var curr_slide_index = swiper.activeIndex;
 
         if (curr_slide_index > 0) {
             document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+            if (endLocation && startLocation) {
+                drawElevatorEnd(startLocation, endLocation, curr_floor_num);
+                //startLocation = null;
+                //endLocation = null;
+            }
         } else if (curr_slide_index == 0) {
             document.getElementById("floorHeader").innerText = "Floor " + 1;
         }
@@ -460,7 +498,16 @@
     }
 
 
-    function drawStartEnd(sp, ep) {
+    function drawStartEnd(sp, ep, floor) {
+        var $canvas = $("#" + floor);
+        var canvasOffset = $canvas.offset();
+        var offsetX = canvasOffset.left;
+        var offsetY = canvasOffset.top;
+        console.log(offsetX, offsetY);
+
+        //var pulse = document.getElementById("pulse");
+        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+
         var start = new Raster("start");
         start.position = sp;
         var end = new Raster("end");
@@ -480,7 +527,19 @@
         swiper.update();
     }
 
-    function drawElevatorEnd(sp, ep) {
+    function drawElevatorEnd(sp, ep, floor) {
+        //console.log(floor);
+
+        var $canvas = $("#" + floor);
+        var canvasOffset = $canvas.offset();
+        var offsetX = canvasOffset.left;
+        var offsetY = canvasOffset.top;
+        console.log(offsetX, offsetY);
+
+        //var pulse = document.getElementById("pulse");
+        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+        //console.log(sp.y);
+
         var start = new Raster("elevator");
         start.position = sp;
         var end = new Raster("end");

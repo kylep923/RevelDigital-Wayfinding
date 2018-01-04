@@ -165,6 +165,9 @@
         },
     });
 
+    var pulse = document.getElementById("pulse");
+    pulse.setAttribute("style", "display: none;");
+
     var DATA = []; //Array of the grids for each floor
     var ELEVATORS; //Array of all the elevators. Each elevator contains an array of the locatons on each floor. 
     var STORES = []; //Array of store locations and the floor it is located on 
@@ -186,6 +189,8 @@
     //var lastStartPath;
     //var lastEndPath;
     var lastEndIcon = [];
+    var endLocation;
+    var startLocation;
 
     var originalTileSize = 0;
     var originalWidth = 0;
@@ -209,13 +214,22 @@
         //paper.setup('myCanvas');
         onLoad();
     };
-    // ------ FIX THIS --------
+
     swiper.on('slideChange', function() {
+        pulse.setAttribute("style", "display: none;");
+    });
+
+    swiper.on('slideChangeTransitionEnd', function() {
         console.log(swiper.activeIndex);
         var curr_slide_index = swiper.activeIndex;
 
         if (curr_slide_index > 0) {
             document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
+            if (endLocation && startLocation) {
+                drawElevatorEnd(startLocation, endLocation, curr_floor_num);
+                //startLocation = null;
+                //endLocation = null;
+            }
         } else if (curr_slide_index == 0) {
             document.getElementById("floorHeader").innerText = "Floor " + 1;
         }
@@ -385,6 +399,7 @@
 
 
     function drawPath(path, floor, drawEnd, callback) {
+        pulse.setAttribute("style", "display: none;");
         changesDone = false;
         // setting up canvas to be drawn on and setting it as active.
         var canvas_1 = document.getElementById(floor);
@@ -464,19 +479,30 @@
         path.smooth();
         lastPath.push(path);
         if (drawEnd == true) {
-            drawStartEnd(startPoint, endPoint);
+            drawStartEnd(startPoint, endPoint, floor + 1);
         }
         if (drawEnd == false && floor == 0) {
             drawStartElevator(startPoint, endPoint);
         }
         if (floor > 0) {
-            drawElevatorEnd(startPoint, endPoint);
+            drawElevatorEnd(startPoint, endPoint, floor + 1);
+            startLocation = startPoint;
+            endLocation = endPoint;
         }
         swiper.update();
     }
 
 
-    function drawStartEnd(sp, ep) {
+    function drawStartEnd(sp, ep, floor) {
+        var $canvas = $("#" + floor);
+        var canvasOffset = $canvas.offset();
+        var offsetX = canvasOffset.left;
+        var offsetY = canvasOffset.top;
+        console.log(offsetX, offsetY);
+
+        //var pulse = document.getElementById("pulse");
+        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+
         var start = new Raster("start");
         start.position = sp;
         var end = new Raster("end");
@@ -496,17 +522,19 @@
         swiper.update();
     }
 
-    function drawElevatorEnd(sp, ep) {
-        /*
-        var $canvas = $("#canvas");
+    function drawElevatorEnd(sp, ep, floor) {
+        //console.log(floor);
+
+        var $canvas = $("#" + floor);
         var canvasOffset = $canvas.offset();
         var offsetX = canvasOffset.left;
         var offsetY = canvasOffset.top;
+        console.log(offsetX, offsetY);
 
-        var pulse = document.getElementById("pulse");
-        pulse.setAttribute("style", "left: " + ep.x + "px; top: " + ep.y + "px;")
-        console.log(sp.y);
-        */
+        //var pulse = document.getElementById("pulse");
+        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+        //console.log(sp.y);
+
         var start = new Raster("elevator");
         start.position = sp;
         var end = new Raster("end");
