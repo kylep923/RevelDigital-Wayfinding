@@ -109,6 +109,31 @@
         width: 100%;
         height: calc(100% - 7%);
     }
+    
+    .gps_ring {
+        border: 3px solid #02ffff;
+        -webkit-border-radius: 100px;
+        height: 100px;
+        width: 100px;
+        position: absolute;
+        -webkit-animation: pulsate 1s ease-out;
+        -webkit-animation-iteration-count: infinite;
+        opacity: 0.0
+    }
+    
+    @-webkit-keyframes pulsate {
+        0% {
+            -webkit-transform: scale(0.1, 0.1);
+            opacity: 0.0;
+        }
+        50% {
+            opacity: 1.0;
+        }
+        100% {
+            -webkit-transform: scale(1.2, 1.2);
+            opacity: 0.0;
+        }
+    }
 </style>
 
 
@@ -128,6 +153,7 @@
         <img id="end" class="visuallyhidden" src="" width="24" height="24">
         <img id="elevator" class="visuallyhidden" src="" width="24" height="24">
     </div>
+    <div id="pulse" class="gps_ring"></div>
 </body>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/js/swiper.min.js"></script>
@@ -471,6 +497,14 @@
     }
 
     function drawElevatorEnd(sp, ep) {
+        var $canvas = $("#canvas");
+        var canvasOffset = $canvas.offset();
+        var offsetX = canvasOffset.left;
+        var offsetY = canvasOffset.top;
+
+        var pulse = document.getElementById("pulse");
+        pulse.setAttribute("style", "left: " + ep.x + "px; top: " + ep.y + "px;")
+        console.log(sp.y);
         var start = new Raster("elevator");
         start.position = sp;
         var end = new Raster("end");

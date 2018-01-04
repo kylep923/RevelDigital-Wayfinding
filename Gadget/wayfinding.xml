@@ -411,7 +411,7 @@
         var flag = pointArray.length;
         path.onFrame = function(event) {
             // Change the y position of the segment point:
-            let time = Math.floor(event.time);
+            //var time = Math.floor(event.time);
             if (pointArray.length > 0) {
                 currentTime = time;
                 //console.log('path', segment.path);
