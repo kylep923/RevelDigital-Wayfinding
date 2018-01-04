@@ -427,7 +427,7 @@
         var flag = pointArray.length;
         path.onFrame = function(event) {
             // Change the y position of the segment point:
-            let time = Math.floor(event.time);
+            var time = Math.floor(event.time);
             if (pointArray.length > 0) {
                 currentTime = time;
                 //console.log('path', segment.path);
@@ -497,6 +497,7 @@
     }
 
     function drawElevatorEnd(sp, ep) {
+        /*
         var $canvas = $("#canvas");
         var canvasOffset = $canvas.offset();
         var offsetX = canvasOffset.left;
@@ -505,6 +506,7 @@
         var pulse = document.getElementById("pulse");
         pulse.setAttribute("style", "left: " + ep.x + "px; top: " + ep.y + "px;")
         console.log(sp.y);
+        */
         var start = new Raster("elevator");
         start.position = sp;
         var end = new Raster("end");
