@@ -409,6 +409,7 @@
 
 
     function drawPath(path, floor, drawEnd, callback) {
+        pulse.setAttribute("style", "display: none;");
         changesDone = false;
         // setting up canvas to be drawn on and setting it as active.
         var canvas_1 = document.getElementById(floor);
