@@ -3,7 +3,8 @@
 <ModulePrefs title="Wayfinding Gadget" description="" author="Revel Digital" background="transparent">
   <UserPref name="dataName" display_name="Name of grid" datatype="string" default_value="" required="true" />
   <UserPref name="apiKey" display_name="Your accounts API Key" datatype="string" default_value="" required="true"/>
-  <UserPref name="pathColor" display_name="Path Color (hex value)" datatype="string" default_value="#42f4c5"/>
+  <UserPref name="pathColor" display_name="Path Color (hex value)" datatype="string" default_value="#02ffff"/>
+  <UserPref name="pulseColor" display_name="Pulse Color (hex value)" datatype="string" default_value="#02ffff"/>
   <UserPref name="pathWidth" display_name="Path Width (integer value)" datatype="string" default_value="3"/>
   <UserPref name="showButtons" display_name="Show Buttons?" datatype="bool" default_value="true"/>
      
@@ -125,7 +126,7 @@
     }
 
     .gps_ring {
-        border: 3px solid #02ffff;
+        border: 3px solid __UP_pulseColor__;
         -webkit-border-radius: 100px;
         height: 100px;
         width: 100px;
