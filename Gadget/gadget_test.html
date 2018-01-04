@@ -184,7 +184,7 @@
     var numFloors = 0;
     var curr_floor_num = 1;
     var changesDone = false;
-    var changeFloor = false;
+    var draw2Done = false;
 
     //var lastStartPath;
     //var lastEndPath;
@@ -226,18 +226,23 @@
         if (curr_slide_index > 0) {
             document.getElementById("floorHeader").innerText = "Floor " + curr_floor_num;
             if (endLocation && startLocation) {
-                drawElevatorEnd(startLocation, endLocation, curr_floor_num);
+                //drawElevatorEnd(startLocation, endLocation, curr_floor_num);
                 //startLocation = null;
                 //endLocation = null;
             }
         } else if (curr_slide_index == 0) {
             document.getElementById("floorHeader").innerText = "Floor " + 1;
+            if (endLocation && startLocation && curr_floor_num == 1) {
+                //drawStartEnd(startLocation, endLocation, curr_floor_num);
+                //startLocation = null;
+                //endLocation = null;
+            }
         }
         swiper.update();
 
 
-        if (curr_slide_index > 1) {
-            changesDone = true;
+        if (draw2Done && curr_slide_index > 0) {
+            drawPulse(endLocation, curr_floor_num);
         }
         // left
     });
@@ -381,7 +386,7 @@
                 drawPath(pathObj[toFloor], toFloor, false, function() {
                         setTimeout(function() {
                             swiper.slideTo(0);
-
+                            draw2Done = true;
                         }, 1000);
                     })
                     //}, 2000);
@@ -401,6 +406,7 @@
     function drawPath(path, floor, drawEnd, callback) {
         pulse.setAttribute("style", "display: none;");
         changesDone = false;
+        draw2Done = false;
         // setting up canvas to be drawn on and setting it as active.
         var canvas_1 = document.getElementById(floor);
         scope.setup(canvas_1);
@@ -456,8 +462,14 @@
                 }, 500);
                 //segment.path.strokeColor = new Color(Math.abs(sinus), Math.abs(sinus), Math.abs(sinus))
             }
-            if (flag == 0 && callback && typeof(callback) === "function") {
+            if (flag == 0) {
                 flag = -1;
+                //DRAW PULSE HERE FOR FIRST FLOOR
+                console.log("Here I am");
+                drawPulse(endPoint, floor + 1);
+            }
+            if (flag == -1 && callback && typeof(callback) === "function") {
+                flag = -2;
                 console.log(floor);
                 setTimeout(function() {
                     console.log("Wait here!")
@@ -468,8 +480,8 @@
                     }
                 }, 1000);
             }
-            if (flag == -1 && callback && typeof(callback) === "function" && changesDone == true) {
-                flag = -2;
+            if (flag == -2 && callback && typeof(callback) === "function" && changesDone == true) {
+                flag = -3;
                 console.log("drawing");
                 //setTimeout(function() {
                 callback();
@@ -480,6 +492,8 @@
         lastPath.push(path);
         if (drawEnd == true) {
             drawStartEnd(startPoint, endPoint, floor + 1);
+            startLocation = startPoint;
+            endLocation = endPoint;
         }
         if (drawEnd == false && floor == 0) {
             drawStartElevator(startPoint, endPoint);
@@ -492,8 +506,7 @@
         swiper.update();
     }
 
-
-    function drawStartEnd(sp, ep, floor) {
+    function drawPulse(ep, floor) {
         var $canvas = $("#" + floor);
         var canvasOffset = $canvas.offset();
         var offsetX = canvasOffset.left;
@@ -502,7 +515,10 @@
 
         //var pulse = document.getElementById("pulse");
         pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
+    }
 
+
+    function drawStartEnd(sp, ep, floor) {
         var start = new Raster("start");
         start.position = sp;
         var end = new Raster("end");
@@ -523,18 +539,6 @@
     }
 
     function drawElevatorEnd(sp, ep, floor) {
-        //console.log(floor);
-
-        var $canvas = $("#" + floor);
-        var canvasOffset = $canvas.offset();
-        var offsetX = canvasOffset.left;
-        var offsetY = canvasOffset.top;
-        console.log(offsetX, offsetY);
-
-        //var pulse = document.getElementById("pulse");
-        pulse.setAttribute("style", "left: " + (ep.x + (offsetX / 2) - 50) + "px; top: " + (ep.y + offsetY - 50) + "px; z-index: 20; display: block;");
-        //console.log(sp.y);
-
         var start = new Raster("elevator");
         start.position = sp;
         var end = new Raster("end");
@@ -564,7 +568,9 @@
         var building_name = BuildingName; //prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
+
             var obj = JSON.parse(building.floorGrids);
+            console.log(obj);
 
             if (obj) {
 
