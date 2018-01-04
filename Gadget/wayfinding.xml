@@ -200,6 +200,8 @@
     //var lastStartPath;
     //var lastEndPath;
     var lastEndIcon = [];
+    var endLocation;
+    var startLocation;
 
     var originalTileSize = 0;
     var originalWidth = 0;
@@ -492,7 +494,9 @@
             drawStartElevator(startPoint, endPoint);
         }
         if (floor > 0) {
-            drawElevatorEnd(startPoint, endPoint);
+            drawElevatorEnd(startPoint, endPoint, floor + 1);
+            startLocation = startPoint;
+            endLocation = endPoint;
         }
         swiper.update();
     }
