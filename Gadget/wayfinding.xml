@@ -393,7 +393,7 @@
                         setTimeout(function() {
                             swiper.slideTo(0);
                             draw2Done = true;
-                        }, 1000);
+                        }, 3000);
                     })
                     //}, 2000);
             });
