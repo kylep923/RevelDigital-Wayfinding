@@ -336,16 +336,18 @@ Details: The function will also ask the user to enter a name for the location.
 */
 function getStore(gridX, gridY) {
     if (enterStoreMode == true) {
-        var name = prompt("Enter store name");
-        var catagory = prompt("Enter store catagory");
-        var description = prompt("Enter store description");
+        var name = prompt("Enter store name.");
+        var category = prompt("Enter store catagories (Seperate each by ',').");
+        category = category.split(",");
+        console.log(category);
+        var description = prompt("Enter store description.");
         floorNum = current_floor;
         storeArray.push({
             x: gridX,
             y: gridY,
             floor: floorNum,
             name: name,
-            catagory: catagory,
+            category: category,
             description: description
         });
         enterStoreMode = false;
