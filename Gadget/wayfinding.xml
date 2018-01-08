@@ -388,9 +388,10 @@
 
         if (Object.keys(pathObj).length > 1) {
             drawPath(pathObj[START.floor], START.floor, false, function() {
-                drawPath(pathObj[toFloor], toFloor, false, function() {
-                    console.log("END of DRAW 2nd Path.");
+                console.log("Start of DRAW 2nd Path.");
+                drawPath(pathObj[toFloor], toFloor, false, function() {  
                     setTimeout(function() {
+                    console.log("END of DRAW 2nd Path.");
                         swiper.slideTo(0);
                         draw2Done = true;
                     }, 3000);
