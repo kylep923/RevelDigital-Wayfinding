@@ -389,12 +389,12 @@
             drawPath(pathObj[START.floor], START.floor, false, function() {
                 //setTimeout(function() {
                 drawPath(pathObj[toFloor], toFloor, false, function() {
-                        setTimeout(function() {
-                            swiper.slideTo(0);
-                            draw2Done = true;
-                        }, 3000);
-                    })
-                    //}, 2000);
+                    setTimeout(function() {
+                        swiper.slideTo(0);
+                        draw2Done = true;
+                    }, 3000);
+                });
+                //}, 2000);
             });
         } else {
             drawPath(pathObj[START.floor], START.floor, true);

@@ -339,7 +339,9 @@ function getStore(gridX, gridY) {
         var name = prompt("Enter store name.");
         var category = prompt("Enter store catagories (Seperate each by ',').");
         category = category.split(",");
-        console.log(category);
+        //console.log(category);
+        var hours = prompt("Enter store hours.");
+        var imageURL = prompt("Enter url for store logo.");
         var description = prompt("Enter store description.");
         floorNum = current_floor;
         storeArray.push({
@@ -348,7 +350,9 @@ function getStore(gridX, gridY) {
             floor: floorNum,
             name: name,
             category: category,
-            description: description
+            description: description,
+            hours: hours,
+            imageURL: imageURL
         });
         enterStoreMode = false;
     }
