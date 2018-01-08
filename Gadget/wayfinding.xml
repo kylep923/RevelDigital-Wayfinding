@@ -624,6 +624,12 @@
                 if (showButtons == true) {
                     populateButtons(STORES);
                 }
+                if (typeof Client != 'undefined') {
+                    console.log('client found');
+                    Client.callback(JSON.stringify(STORES));
+                } else {
+                    console.log('client not found');
+                }
             }
         });
     }
