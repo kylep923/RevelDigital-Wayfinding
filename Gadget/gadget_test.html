@@ -401,6 +401,12 @@
                 //console.log(ELEVATORS[x].floorAccess[y]);
             }
         }
+        if (typeof Client != 'undefined') {
+            console.log('client found');
+            Client.callback(JSON.stringify(pathArray));
+        } else {
+            console.log('client not found');
+        }
         console.log(Object.keys(pathObj).length);
 
         console.log(pathObj);
