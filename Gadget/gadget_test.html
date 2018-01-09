@@ -209,7 +209,7 @@
     var height = $(window).height() - ($(window).height() * .125); //prefs.getString("rdH");
     document.getElementById("my-slider").style.height = height + "px";
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
-    var BuildingName = "test3";
+    var BuildingName = "test10";
     var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
@@ -395,6 +395,7 @@
                     //pathArray.push(path);
                     pathObj[START.floor] = path;
                     console.log(JSON.stringify(pathArray));
+                    break;
                     //drawPath(path, START.floor);
                 }
                 //console.log(ELEVATORS[x].floorAccess[y]);

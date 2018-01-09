@@ -396,6 +396,7 @@
                     //pathArray.push(path);
                     pathObj[START.floor] = path;
                     console.log(JSON.stringify(pathArray));
+                    break;
                     //drawPath(path, START.floor);
                 }
                 //console.log(ELEVATORS[x].floorAccess[y]);
