@@ -479,10 +479,10 @@
                     console.log("Wait here!")
                         // --- FIX THIS ---
                     swiper.slideTo(floor + 1);
-                    if (swiper.activeIndex == 1) {
-                        changesDone = true;
-                    }
                 }, 1000);
+            }
+            if (swiper.activeIndex == 1) {
+                changesDone = true;
             }
             if (flag == -2 && callback && typeof(callback) === "function" && changesDone == true) {
                 flag = -3;

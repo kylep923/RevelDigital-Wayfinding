@@ -209,7 +209,7 @@
     var height = $(window).height() - ($(window).height() * .125); //prefs.getString("rdH");
     document.getElementById("my-slider").style.height = height + "px";
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
-    var BuildingName = "test3";
+    var BuildingName = "test10";
     var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
@@ -356,7 +356,7 @@
 
         }
 
-        var pathArray = [];
+        var pathDirections = {};
         var pathObj = {};
 
         for (var x = 0; x < ELEVATORS.length; x++) {
@@ -364,13 +364,13 @@
                 // Logic to find best floor path here.
                 if (START.floor == ELEVATORS[x].floorAccess[y].floor && toFloor != START.floor) {
                     path = getPath(START.x, START.y, ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, START.floor);
-                    pathArray.push(path);
+                    pathArray[START.floor] = "Go to the " + ELEVATORS[x].name + " elevator and take it to " + toFloor;
                     pathObj[START.floor] = path;
                     //drawPath(path, START.floor);
                 }
                 if (ELEVATORS[x].floorAccess[y].floor == toFloor && toFloor != START.floor) {
                     path = getPath(ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, toX, toY, toFloor);
-                    pathArray.push(path);
+                    pathArray[toFloor] = "Exit the " + ELEVATORS[x].name + " elevator on " + toFloor + " Then proceed to " + storeName;
                     pathObj[toFloor] = path;
 
                 }
@@ -386,6 +386,8 @@
         }
         console.log(Object.keys(pathObj).length);
 
+        console.log(pathObj);
+
         if (Object.keys(pathObj).length > 1) {
             drawPath(pathObj[START.floor], START.floor, false, function() {
                 drawPath(pathObj[toFloor], toFloor, false, function() {
@@ -399,7 +401,6 @@
         } else {
             drawPath(pathObj[START.floor], START.floor, true);
         }
-        //lastPath = pathArray;
     }
 
     function alertWhenDone(msg, callback) {
@@ -477,9 +478,9 @@
                         // --- FIX THIS ---
                     swiper.slideTo(floor + 1);
                 }, 1000);
-                if (swiper.activeIndex == 1) {
-                    changesDone = true;
-                }
+            }
+            if (swiper.activeIndex == 1) {
+                changesDone = true;
             }
             if (flag == -2 && callback && typeof(callback) === "function" && changesDone == true) {
                 flag = -3;
@@ -614,7 +615,7 @@
                     }
                 }
 
-                console.log(STORES);
+                console.log(JSON.stringify(STORES));
                 var index = STORES.map(x => x.name).indexOf('start');
                 START = STORES[index];
                 console.log(START);
