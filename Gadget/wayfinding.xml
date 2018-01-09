@@ -365,22 +365,37 @@
                 // Logic to find best floor path here.
                 if (START.floor == ELEVATORS[x].floorAccess[y].floor && toFloor != START.floor) {
                     path = getPath(START.x, START.y, ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, START.floor);
-                    pathArray.push(path);
+                    pathArray["START"] = {
+                        floor: START.floor,
+                        start: "Kiosk",
+                        destination: ELEVATORS[x].name
+                    };
+                    //pathArray.push(path);
                     pathObj[START.floor] = path;
-                    console.log(pathObj);
+                    console.log(JSON.stringify(pathArray));
                     //drawPath(path, START.floor);
                 }
                 if (ELEVATORS[x].floorAccess[y].floor == toFloor && toFloor != START.floor) {
                     path = getPath(ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, toX, toY, toFloor);
-                    pathArray.push(path);
+                    pathArray["END"] = {
+                        floor: toFloor,
+                        start: ELEVATORS[x].name,
+                        destination: storeName
+                    };
+                    //pathArray.push(path);
                     pathObj[toFloor] = path;
-                    console.log(pathObj);
+                    console.log(JSON.stringify(pathArray));
                 }
                 if (START.floor == toFloor) {
                     path = getPath(START.x, START.y, toX, toY, toFloor);
-                    pathArray.push(path);
+                    pathArray["START"] = {
+                        floor: START.floor,
+                        start: "Kiosk",
+                        destination: storeName
+                    };
+                    //pathArray.push(path);
                     pathObj[START.floor] = path;
-                    console.log(pathObj);
+                    console.log(JSON.stringify(pathArray));
                     //drawPath(path, START.floor);
                 }
                 //console.log(ELEVATORS[x].floorAccess[y]);
