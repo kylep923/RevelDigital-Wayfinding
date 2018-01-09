@@ -357,7 +357,7 @@
 
         }
 
-        var pathArray = [];
+        var pathArray = {};
         var pathObj = {};
 
         for (var x = 0; x < ELEVATORS.length; x++) {
