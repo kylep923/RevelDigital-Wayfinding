@@ -315,6 +315,11 @@ function resizeImage(imgID, height, width) {
 
 }
 
+
+//-----------------------------------------------------------------------------------------------------------------------------
+// ADD STORE CODE HERE
+//-----------------------------------------------------------------------------------------------------------------------------
+
 /*
 Button: name - addStore | text - ADD
 Function: onclick
@@ -324,7 +329,108 @@ Details: The function tells teh user to select a location for the store
          Button location: store_panel div on the editor page.
 */
 addStore.onclick = function() {
+    document.getElementById("addStoreModal").style.display = "block";
+}
+
+//Variables used when adding a new store.
+var store_name;
+var store_catagory;
+var store_hours;
+var store_description;
+var store_imageUrl;
+var store_index;
+
+continue_btn.onclick = function() {
+    //Get store Information and hide modal.
+    store_name = document.getElementById("store_name").value;
+    store_catagory = document.getElementById("store_catagories").value;
+    store_hours = document.getElementById("store_hours").value;
+    store_description = document.getElementById("store_description").value;
+    store_imageUrl = document.getElementById("store_image").value;
+    document.getElementById("addStoreModal").style.display = "none";
+    //Clear store Information.
+    document.getElementById("store_name").value = "";
+    document.getElementById("store_catagories").value = "";
+    document.getElementById("store_hours").value = "";
+    document.getElementById("store_description").value = "";
+    document.getElementById("store_image").value = "";
+    //Inform user to select the location of the store.
     alert("Select coordinates on grid");
+    enterStoreMode = true;
+}
+
+no_store_add.onclick = function() {
+    //Clears store infromation and hides the modal for adding a store when the cancel button is clicked.
+    document.getElementById("store_name").value = "";
+    store_catagory = "";
+    document.getElementById("store_catagories").value = "";
+    store_hours = "";
+    document.getElementById("store_hours").value = "";
+    store_description = "";
+    document.getElementById("store_description").value = "";
+    store_imageUrl = "";
+    document.getElementById("store_image").value = "";
+    document.getElementById("addStoreModal").style.display = "none";
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
+// EDIT STORE CODE HERE
+//-----------------------------------------------------------------------------------------------------------------------------
+
+// SHOW EDIT STORE MODAL
+editStore.onclick = function() {
+    populateStores();
+    document.getElementById("editStoreModal").style.display = "block";
+}
+
+// LOAD SELECTED STORE TO EDIT
+load_store_btn.onclick = function() {
+    store_index = document.getElementById("select_store").value;
+    console.log(storeArray[store_index]);
+    console.log(store_index);
+    document.getElementById("edit_store_name").value = storeArray[store_index].name;
+    document.getElementById("edit_store_catagories").value = storeArray[store_index].category;
+    document.getElementById("edit_store_hours").value = storeArray[store_index].hours;
+    document.getElementById("edit_store_description").value = storeArray[store_index].description;
+    document.getElementById("edit_store_image").value = storeArray[store_index].imageURL;
+}
+
+// POPULATE STORE SELECTOR
+function populateStores() {
+    //Clear old options
+    var select = document.getElementById("select_store");
+    var length = select.options.length;
+    for (i = 0; i < length; i++) {
+        select.options[i] = null;
+    }
+    //Add new options
+    for (var x = 0; x < storeArray.length; x++) {
+        var opt = document.createElement('option');
+        opt.innerHTML = storeArray[x].name;
+        opt.value = x;
+        select.appendChild(opt);
+    }
+}
+
+// ADD EDITED STORE TO THE DATABASE/STOREARRAY
+edit_continue_btn.onclick = function() {
+    //Get store Information and hide modal.
+    store_name = document.getElementById("edit_store_name").value;
+    store_catagory = document.getElementById("edit_store_catagories").value;
+    store_hours = document.getElementById("edit_store_hours").value;
+    store_description = document.getElementById("edit_store_description").value;
+    store_imageUrl = document.getElementById("edit_store_image").value;
+    document.getElementById("editStoreModal").style.display = "none";
+    storeArray.splice(store_index, 1);
+    console.log(storeArray);
+    //Clear store Information.
+    document.getElementById("edit_store_name").value = "";
+    document.getElementById("edit_store_catagories").value = "";
+    document.getElementById("edit_store_hours").value = "";
+    document.getElementById("edit_store_description").value = "";
+    document.getElementById("edit_store_image").value = "";
+    //inform user to add new coordinates on the graph
+    alert("Select new coordinates on grid");
     enterStoreMode = true;
 }
 
@@ -336,13 +442,12 @@ Details: The function will also ask the user to enter a name for the location.
 */
 function getStore(gridX, gridY) {
     if (enterStoreMode == true) {
-        var name = prompt("Enter store name.");
-        var category = prompt("Enter store catagories (Seperate each by ',').");
-        category = category.split(",");
+        var name = store_name;
+        var category = store_catagory.split(",");
         //console.log(category);
-        var hours = prompt("Enter store hours.");
-        var imageURL = prompt("Enter url for store logo.");
-        var description = prompt("Enter store description.");
+        var hours = store_hours;
+        var imageURL = store_imageUrl;
+        var description = store_description;
         floorNum = current_floor;
         storeArray.push({
             x: gridX,
@@ -354,9 +459,15 @@ function getStore(gridX, gridY) {
             hours: hours,
             imageURL: imageURL
         });
+        alert("Store added successfully.");
+        store_name = "";
+        store_catagory = "";
+        store_hours = "";
+        store_description = "";
+        store_imageUrl = "";
         enterStoreMode = false;
     }
-    //console.log(storeArray);
+    console.log(storeArray);
     Controller.rest();
     return;
 }

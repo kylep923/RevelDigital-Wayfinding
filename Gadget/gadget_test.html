@@ -209,7 +209,7 @@
     var height = $(window).height() - ($(window).height() * .125); //prefs.getString("rdH");
     document.getElementById("my-slider").style.height = height + "px";
     var api_key = "8FYmwxXYXU_kd11xclK0HQ"; //prefs.getString("apiKey");
-    var BuildingName = "test10";
+    var BuildingName = "WestAcersDemo";
     var showButtons = true; //prefs.getString("showButtons");
     paper.install(window);
     window.onload = function() {
@@ -359,47 +359,60 @@
         var pathArray = {};
         var pathObj = {};
 
-        for (var x = 0; x < ELEVATORS.length; x++) {
-            for (var y = 0; y < ELEVATORS[x].floorAccess.length; y++) {
-                // Logic to find best floor path here.
-                if (START.floor == ELEVATORS[x].floorAccess[y].floor && toFloor != START.floor) {
-                    path = getPath(START.x, START.y, ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, START.floor);
-                    pathArray["START"] = {
-                        floor: START.floor,
-                        start: "Kiosk",
-                        destination: ELEVATORS[x].name
-                    };
-                    //pathArray.push(path);
-                    pathObj[START.floor] = path;
-                    console.log(JSON.stringify(pathArray));
-                    //drawPath(path, START.floor);
+        console.log(START);
+        if (ELEVATORS.length > 0) {
+            for (var x = 0; x < ELEVATORS.length; x++) {
+                for (var y = 0; y < ELEVATORS[x].floorAccess.length; y++) {
+                    // Logic to find best floor path here.
+                    if (START.floor == ELEVATORS[x].floorAccess[y].floor && toFloor != START.floor) {
+                        path = getPath(START.x, START.y, ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, START.floor);
+                        pathArray["START"] = {
+                            floor: START.floor,
+                            start: "Kiosk",
+                            destination: ELEVATORS[x].name
+                        };
+                        //pathArray.push(path);
+                        pathObj[START.floor] = path;
+                        console.log(JSON.stringify(pathArray));
+                        //drawPath(path, START.floor);
+                    }
+                    if (ELEVATORS[x].floorAccess[y].floor == toFloor && toFloor != START.floor) {
+                        path = getPath(ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, toX, toY, toFloor);
+                        pathArray["END"] = {
+                            floor: toFloor,
+                            start: ELEVATORS[x].name,
+                            destination: storeName
+                        };
+                        //pathArray.push(path);
+                        pathObj[toFloor] = path;
+                        console.log(JSON.stringify(pathArray));
+                    }
+                    if (START.floor == toFloor) {
+                        path = getPath(START.x, START.y, toX, toY, toFloor);
+                        pathArray["START"] = {
+                            floor: START.floor,
+                            start: "Kiosk",
+                            destination: storeName
+                        };
+                        //pathArray.push(path);
+                        pathObj[START.floor] = path;
+                        console.log(JSON.stringify(pathArray));
+                        break;
+                        //drawPath(path, START.floor);
+                    }
+                    //console.log(ELEVATORS[x].floorAccess[y]);
                 }
-                if (ELEVATORS[x].floorAccess[y].floor == toFloor && toFloor != START.floor) {
-                    path = getPath(ELEVATORS[x].floorAccess[y].x, ELEVATORS[x].floorAccess[y].y, toX, toY, toFloor);
-                    pathArray["END"] = {
-                        floor: toFloor,
-                        start: ELEVATORS[x].name,
-                        destination: storeName
-                    };
-                    //pathArray.push(path);
-                    pathObj[toFloor] = path;
-                    console.log(JSON.stringify(pathArray));
-                }
-                if (START.floor == toFloor) {
-                    path = getPath(START.x, START.y, toX, toY, toFloor);
-                    pathArray["START"] = {
-                        floor: START.floor,
-                        start: "Kiosk",
-                        destination: storeName
-                    };
-                    //pathArray.push(path);
-                    pathObj[START.floor] = path;
-                    console.log(JSON.stringify(pathArray));
-                    break;
-                    //drawPath(path, START.floor);
-                }
-                //console.log(ELEVATORS[x].floorAccess[y]);
             }
+        } else {
+            path = getPath(START.x, START.y, toX, toY, toFloor);
+            pathArray["START"] = {
+                floor: START.floor,
+                start: "Kiosk",
+                destination: storeName
+            };
+            //pathArray.push(path);
+            pathObj[START.floor] = path;
+            console.log(JSON.stringify(pathArray));
         }
         if (typeof Client != 'undefined') {
             console.log('client found');

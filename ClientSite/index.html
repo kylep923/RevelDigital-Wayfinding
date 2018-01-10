@@ -110,6 +110,7 @@
             <h3>Add Store Location</h3>
             <button id="addStore" class="button">ADD</button>
             <button id="back_btn" class="button">Back To Grids</button>
+            <button id="editStore" class="button">Edit</button>
         </div>
         <div id="stats"></div>
 
@@ -147,12 +148,27 @@
 
         </div>
 
-        <div id="continueModal" class="modal">
+        <div id="addStoreModal" class="modal">
 
             <!-- Modal content -->
             <div class="modal-content">
-                <h4>Continue when the grid is done drawing</h4>
+                <h4>Add Store Information</h4>
+                Store Name: <input type="text" id="store_name"> <br> Catagories: <input type="text" id="store_catagories"><br> Description: <input type="text" id="store_description"><br> Store Hours: <input type="text" id="store_hours"><br> Image URL:
+                <input type="text" id="store_image"><br>
                 <button class="button" id="continue_btn">Continue</button>
+                <button class="button" id="no_store_add">Cancel</button>
+            </div>
+
+        </div>
+
+        <div id="editStoreModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <h4>Edit Store Information</h4>
+                Select Store: <select id="select_store"></select><button class="button" id="load_store_btn">Load Store</button><br/> Store Name: <input type="text" id="edit_store_name"><br/> Catagories: <input type="text" id="edit_store_catagories"><br/>                Description: <input type="text" id="edit_store_description"><br/> Store Hours: <input type="text" id="edit_store_hours"><br/> Image URL: <input type="text" id="edit_store_image"><br/>
+                <button class="button" id="edit_continue_btn">Continue</button>
+                <button class="button" id="edit_no_store_add">Cancel</button>
             </div>
 
         </div>
@@ -188,7 +204,8 @@
 </body>
 
 <script>
-    document.getElementById("continueModal").style.display = "none";
+    document.getElementById("addStoreModal").style.display = "none";
+    document.getElementById("editStoreModal").style.display = "none";
     document.getElementById("loadScreen").style.display = "none";
     document.getElementById("configElevatorModal").style.display = "none";
 
