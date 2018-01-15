@@ -38,7 +38,7 @@ img {
     display: block;
 }
 
-ul {
+ul.header {
     list-style-type: none;
     margin: 0;
     padding: 10px;
@@ -46,11 +46,11 @@ ul {
     background-color: #333;
 }
 
-li {
+li.header {
     float: left;
 }
 
-li a {
+li.header a {
     display: block;
     color: white;
     text-align: center;
@@ -58,7 +58,7 @@ li a {
     text-decoration: none;
 }
 
-li a:hover {
+li.header a:hover {
     background-color: #111;
 }
 
@@ -198,6 +198,7 @@ span.psw {
 .modal-content {
     background-color: #fefefe;
     margin: auto;
+    margin-bottom: 250px;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;

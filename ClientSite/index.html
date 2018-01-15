@@ -69,16 +69,24 @@
     <div id="grid_list_container">
         <div>
             <div>
-                <ul>
-                    <li>
+                <ul class="header">
+                    <li class="header">
                         <a id="account_header"></a>
                     </li>
-                    <li style="float:right"><a class="active" id="logout_btn">Logout</a></li>
+                    <li class="header" style="float:right"><a class="active" id="logout_btn">Logout</a></li>
                 </ul>
             </div>
             <table id="buildings_table"></table>
             <button id="new_grid_btn" class='login_btn'>Add New</button>
         </div>
+
+        <div id="storeListModal" class="modal">
+            <div class="modal-content">
+                <ul id="storeList"></ul>
+                <button class="button" id="exit_store_list">Close</button>
+            </div>
+        </div>
+
     </div>
 
     <div id="editor_container">
@@ -204,6 +212,7 @@
 </body>
 
 <script>
+    document.getElementById("storeListModal").style.display = "none";
     document.getElementById("addStoreModal").style.display = "none";
     document.getElementById("editStoreModal").style.display = "none";
     document.getElementById("loadScreen").style.display = "none";
@@ -257,13 +266,56 @@
 
     function deleteGridData(buildingName) {
         console.log(buildingName);
-        var del_obj = firebase.database().ref('/' + api_key + '/buildings/' + buildingName);
-        del_obj.remove().then(function(ref) {
-            // data has been deleted locally and in the database
-            loadListPage();
-        }, function(error) {
-            console.log("Error:", error);
+        if (confirm('Are you sure you want to Delete this grid in the database?')) {
+            // Delete it!
+            var del_obj = firebase.database().ref('/' + api_key + '/buildings/' + buildingName);
+            del_obj.remove().then(function(ref) {
+                // data has been deleted locally and in the database
+                loadListPage();
+            }, function(error) {
+                console.log("Error:", error);
+            });
+        } else {
+            // Do nothing!
+        }
+    }
+
+    function showStores(building_name) {
+
+        var building_stores = [];
+
+        firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
+            building = snapshot.val();
+            var obj = JSON.parse(building.floorGrids);
+            if (obj) {
+
+                var storeList = document.getElementById('storeList')
+
+                // Populate list on modal
+                for (var x = 1; x < obj.length; x++) {
+                    for (var y = 0; y < obj[x].storeInfo.length; y++) {
+                        if (obj[x].storeInfo[y].name != 'start') {
+                            building_stores.push(obj[x].storeInfo[y].name);
+                            var li = document.createElement('li');
+                            var store_text = document.createTextNode(obj[x].storeInfo[y].name);
+                            li.appendChild(store_text);
+                            storeList.appendChild(li);
+                        }
+                    }
+                }
+                var index = building_stores.indexOf('start');
+                building_stores.splice(index, 1);
+
+                // Show modal
+                document.getElementById("storeListModal").style.display = "block";
+            }
         });
+
+    }
+
+    exit_store_list.onclick = function() {
+        $('ul').empty();
+        document.getElementById("storeListModal").style.display = "none";
     }
 
     //-------------------------------------------------------------------------------------
@@ -352,10 +404,16 @@
                         var td2 = document.createElement('td');
                         var td3 = document.createElement('td');
                         var td4 = document.createElement('td');
+
+                        var td5 = document.createElement('td');
+
                         var delButton = document.createElement('button');
                         var editButton = document.createElement('button');
                         td3.innerHTML = "<button class='login_btn' onclick=loadOldGrid('" + api_key + "','" + key + "')>Edit</button>";
                         td4.innerHTML = "<button class='login_btn' onclick=deleteGridData('" + key + "')>Delete</button>";
+
+                        td5.innerHTML = "<button class='login_btn' onclick=showStores('" + key + "')>Stores</button>";
+
                         // Adding info to rows and delete button
                         var text1 = document.createTextNode(key);
                         var text2 = document.createTextNode(buildingDesc);
@@ -367,6 +425,9 @@
                         tr.appendChild(td2);
                         tr.appendChild(td3);
                         tr.appendChild(td4);
+
+                        tr.appendChild(td5);
+
                         buildings_table.appendChild(tr);
                     }
                 }

@@ -172,6 +172,12 @@ function loadOldGrid(api_key, buildingName) {
             console.log(snapshot.val())
             obj = JSON.parse(snapshot.val().floorGrids);
             floorArray = obj;
+            /*
+            if (buildingName == 'WestAcersDemo') {
+                console.log('Readding stores');
+                storeArray = 
+            }
+            */
             if (obj[current_floor].storeInfo.length > 0) {
                 storeArray = obj[current_floor].storeInfo;
             }
@@ -432,6 +438,16 @@ edit_continue_btn.onclick = function() {
     //inform user to add new coordinates on the graph
     alert("Select new coordinates on grid");
     enterStoreMode = true;
+}
+
+edit_no_store_add.onclick = function() {
+    document.getElementById("editStoreModal").style.display = "none";
+    //Clear store Information.
+    document.getElementById("edit_store_name").value = "";
+    document.getElementById("edit_store_catagories").value = "";
+    document.getElementById("edit_store_hours").value = "";
+    document.getElementById("edit_store_description").value = "";
+    document.getElementById("edit_store_image").value = "";
 }
 
 /*
