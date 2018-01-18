@@ -330,7 +330,7 @@ function resizeImage(imgID, height, width) {
 Button: name - addStore | text - ADD
 Function: onclick
 Use: starts the add store process.
-Details: The function tells teh user to select a location for the store
+Details: The function tells the user to select a location for the store
          and sets enterStroreMode to true.
          Button location: store_panel div on the editor page.
 */
@@ -345,6 +345,8 @@ var store_hours;
 var store_description;
 var store_imageUrl;
 var store_index;
+var store_x;
+var store_y;
 
 continue_btn.onclick = function() {
     //Get store Information and hide modal.
@@ -399,6 +401,10 @@ load_store_btn.onclick = function() {
     document.getElementById("edit_store_hours").value = storeArray[store_index].hours;
     document.getElementById("edit_store_description").value = storeArray[store_index].description;
     document.getElementById("edit_store_image").value = storeArray[store_index].imageURL;
+
+    store_x = storeArray[store_index].x;
+    store_y = storeArray[store_index].y;
+    console.log("X: " + store_x + " Y: " + store_y);
 }
 
 // POPULATE STORE SELECTOR
@@ -436,8 +442,14 @@ edit_continue_btn.onclick = function() {
     document.getElementById("edit_store_description").value = "";
     document.getElementById("edit_store_image").value = "";
     //inform user to add new coordinates on the graph
-    alert("Select new coordinates on grid");
-    enterStoreMode = true;
+    if (confirm('Has the store moved?')) {
+        alert("Select new coordinates on grid");
+        enterStoreMode = true;
+    } else {
+        enterStoreMode = true;
+        getStore(store_x, store_y);
+    }
+
 }
 
 edit_no_store_add.onclick = function() {

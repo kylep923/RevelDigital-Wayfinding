@@ -261,7 +261,7 @@
             floorGrids: floorGrids,
             buildingDesc: buildingDesc
         });
-        console.log(floorGrids);
+        //console.log(floorGrids);
     }
 
     function deleteGridData(buildingName) {
@@ -314,7 +314,7 @@
     }
 
     exit_store_list.onclick = function() {
-        $('ul').empty();
+        $('#storeList').empty();
         document.getElementById("storeListModal").style.display = "none";
     }
 
@@ -380,12 +380,20 @@
                 var descriptionhead = document.createTextNode('Grid Description');
                 th2.appendChild(descriptionhead);
                 var th3 = document.createElement('th');
-                var deleteRow = document.createTextNode('');
-                th3.appendChild(deleteRow);
+                var editRow = document.createTextNode('Edit');
+                th3.appendChild(editRow);
+                var th4 = document.createElement('th');
+                var deleteRow = document.createTextNode('Delete');
+                th4.appendChild(deleteRow);
+                var th5 = document.createElement('th');
+                var storesRow = document.createTextNode('Store List');
+                th5.appendChild(storesRow);
                 // Add Headers to Row
                 thr.appendChild(th1);
                 thr.appendChild(th2);
                 thr.appendChild(th3);
+                thr.appendChild(th4);
+                thr.appendChild(th5);
                 // add header row to Table
                 buildings_table.appendChild(thr);
                 if (db) {
