@@ -148,7 +148,7 @@ Details: This function opens the editor page and closes all other pages.
          Finally the page gets the information about the building from the database and calls loadGrid()
          after setting the floorArray and imgArray.
 */
-function loadOldGrid(api_key, buildingName) {
+function loadOldGrid(user_api_key, buildingName) {
     document.getElementById("editor_container").style.display = "inline";
     document.getElementById("login_container").style.display = "none";
     document.getElementById("grid_list_container").style.display = "none";
@@ -167,7 +167,7 @@ function loadOldGrid(api_key, buildingName) {
 
     enterStoreMode = false;
 
-    firebase.database().ref('/' + api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
+    firebase.database().ref('/' + user_api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
         if (snapshot.val() != null) {
             console.log(snapshot.val())
             obj = JSON.parse(snapshot.val().floorGrids);
@@ -697,7 +697,7 @@ get_array.onclick = function() {
         buildingDescription = grid_input_description.value;
         saveFloor(current_floor);
         //check the DB if this building info already exists.
-        firebase.database().ref('/' + api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
+        firebase.database().ref('/' + user_api_key + '/buildings/' + buildingName).once('value').then(function(snapshot) {
             grid = snapshot.val();
             if (!grid) {
                 console.log(buildingName);

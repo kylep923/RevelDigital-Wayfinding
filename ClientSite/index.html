@@ -46,22 +46,44 @@
 
 <body>
     <div id="login_container" class="container">
-        <h2>Login Form</h2>
+        <h2>Revel Digital Wayfinding</h2>
         <div id="login">
             <div class="imgcontainer">
                 <img src="images/revel_logo.png" alt="Avatar" class="avatar">
             </div>
 
             <div class="container">
-                <label><b>Revel API Key</b></label>
-                <input id="api_key" type="text" placeholder="Enter API Key" name="api_key" required>
-
-                <button id="submit_api" type="submit" class="login_btn">Login</button>
+                <label><b>Login</b></label>
+                <input id="user_email" type="text" placeholder="Enter Email" name="user_email" required>
+                <input id="user_password" type="text" placeholder="Enter Password" name="user_password" required>
+                <button id="user_login_btn" type="submit" class="login_btn">Login</button>
             </div>
 
             <div class="container" style="background-color:#f1f1f1">
-                <button type="button" class="cancelbtn">Cancel</button>
-                <span id="new_user" class="psw">New Login? <a href="#">Click here!</a></span>
+                <button id="new_user_btn" type="button" class="cancelbtn">New User?</button>
+                <span class="psw">Check out Revel Digital <a href="https://www.reveldigital.com/">Click here!</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="new_login_container" class="container">
+        <h2>Revel Digital Wayfinding</h2>
+        <div id="login">
+            <div class="imgcontainer">
+                <img src="images/revel_logo.png" alt="Avatar" class="avatar">
+            </div>
+
+            <div class="container">
+                <label><b>Sign Up</b></label>
+                <input id="new_user_email" type="text" placeholder="Enter Email" name="new_user_email" required>
+                <input id="new_user_password" type="text" placeholder="Enter Password" name="new_user_password" required>
+                <input id="new_api_key" type="text" placeholder="Enter API Key" name="api_key" required>
+                <button id="new_user_login" type="submit" class="login_btn">Sign Up</button>
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+                <button id="existing_user_btn" type="button" class="cancelbtn">Existing User?</button>
+                <span class="psw">Need a Revel API Key? <a href="https://www.reveldigital.com/">Click here!</a></span>
             </div>
         </div>
     </div>
@@ -212,52 +234,25 @@
 </body>
 
 <script>
+    document.getElementById("new_login_container").style.display = "none";
     document.getElementById("storeListModal").style.display = "none";
     document.getElementById("addStoreModal").style.display = "none";
     document.getElementById("editStoreModal").style.display = "none";
     document.getElementById("loadScreen").style.display = "none";
     document.getElementById("configElevatorModal").style.display = "none";
+    document.getElementById("grid_list_container").style.display = "none";
+    document.getElementById("editor_container").style.display = "none";
 
     // Database info and globals
     //-------------------------------------------------------------------------------------
     var database = firebase.database();
     var account = null;
     var revel_account = null;
-    var api_key;
+    var user_api_key;
 
     // Checking if user has already logged in and brings them to the list page if they are.
-    if (window.localStorage.getItem("api_key")) {
-        console.log(window.localStorage.getItem("api_key"));
-        api_key = window.localStorage.getItem("api_key");
-        $.ajax({
-            url: "http://api.reveldigital.com/account?api_key=" + api_key,
-            type: 'GET',
-            dataType: 'json',
-            success: function(res) {
-                revel_account = res;
-                firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
-                    account = snapshot.val();
-                    if (!account) {
-                        firebase.database().ref('/' + api_key).set({
-                            accountName: res.name,
-                            buildings: []
-                        });
-                    }
-                });
-                document.getElementById("account_header").innerHTML = res.name;
-                loadListPage();
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                alert("Error: Invalid API Key.");
-            }
-        });
-    } else {
-        document.getElementById("grid_list_container").style.display = "none";
-        document.getElementById("editor_container").style.display = "none";
-    }
-
     function writeGridData(buildingName, floorGrids, buildingDesc) {
-        firebase.database().ref('/' + api_key + '/buildings/' + buildingName).set({
+        firebase.database().ref('/' + user_api_key + '/buildings/' + buildingName).set({
             floorGrids: floorGrids,
             buildingDesc: buildingDesc
         });
@@ -268,7 +263,7 @@
         console.log(buildingName);
         if (confirm('Are you sure you want to Delete this grid in the database?')) {
             // Delete it!
-            var del_obj = firebase.database().ref('/' + api_key + '/buildings/' + buildingName);
+            var del_obj = firebase.database().ref('/' + user_api_key + '/buildings/' + buildingName);
             del_obj.remove().then(function(ref) {
                 // data has been deleted locally and in the database
                 loadListPage();
@@ -284,7 +279,7 @@
 
         var building_stores = [];
 
-        firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
+        firebase.database().ref('/' + user_api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
             var obj = JSON.parse(building.floorGrids);
             if (obj) {
@@ -321,17 +316,98 @@
     //-------------------------------------------------------------------------------------
     // Start of JS code for login page.
     //-------------------------------------------------------------------------------------
-    submit_api.onclick = function() {
-        // Check if the entered API Key is valid.
-        api_key = document.getElementById("api_key").value;
+    var new_user = false;
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            if (new_user) {
+                user_api_key = document.getElementById("new_api_key").value;
+                addNewUser(user_api_key, user);
+                new_user = false;
+            } else {
+                firebase.database().ref('/Users/' + user.uid).once('value').then(function(snapshot) {
+                    account = snapshot.val();
+                    user_api_key = account.api_key;
+                    $.ajax({
+                        url: "https://api.reveldigital.com/account?api_key=" + user_api_key,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(res) {
+                            revel_account = res;
+                            document.getElementById("account_header").innerHTML = res.name;
+                            loadListPage();
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error: Invalid API Key.");
+                            console.log("failed call");
+                        }
+                    });
+                });
+            }
+            document.getElementById("login_container").style.display = "none";
+            document.getElementById("new_login_container").style.display = "none";
+            document.getElementById("grid_list_container").style.display = "block";
+        } else {
+            // No user is signed in.
+            console.log("No User logged in.")
+        }
+    });
+
+    user_login_btn.onclick = function() {
+        var email = document.getElementById("user_email").value;
+        var password = document.getElementById("user_password").value;
+        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode + ": " + errorMessage);
+            // ...
+        });
+    }
+
+    new_user_login.onclick = function() {
+        var email = document.getElementById("new_user_email").value;
+        var password = document.getElementById("new_user_password").value;
+        console.log(email + " | " + password);
+        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode + ": " + errorMessage);
+            // ...
+        });
+        new_user = true;
+
+    }
+
+    new_user_btn.onclick = function() {
+        // Hide login container for existing users & Show login container for new users
+        document.getElementById("login_container").style.display = "none";
+        document.getElementById("new_login_container").style.display = "block";
+    }
+
+    existing_user_btn.onclick = function() {
+        // Show login container for existing users & Hide login container for new users
+        document.getElementById("login_container").style.display = "block";
+        document.getElementById("new_login_container").style.display = "none";
+    }
+
+    function addNewUser(api_key, user) {
         $.ajax({
-            url: "http://api.reveldigital.com/account?api_key=" + api_key,
+            url: "https://api.reveldigital.com/account?api_key=" + api_key,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                window.localStorage.setItem("api_key", api_key);
-                console.log(window.localStorage.getItem("api_key"));
                 revel_account = res;
+                firebase.database().ref('/Users/' + user.uid).once('value').then(function(snapshot) {
+                    account = snapshot.val();
+                    if (!account) {
+                        firebase.database().ref('/Users/' + user.uid).set({
+                            api_key: api_key
+                        });
+                    }
+                });
+
                 firebase.database().ref('/' + api_key).once('value').then(function(snapshot) {
                     account = snapshot.val();
                     if (!account) {
@@ -341,19 +417,15 @@
                         });
                     }
                 });
-                document.getElementById("account_header").innerHTML = res.name;
                 loadListPage();
+                document.getElementById("account_header").innerHTML = res.name;
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
                 alert("Error: Invalid API Key.");
+                console.log("failed call");
             }
         });
-    }
-
-    new_user.onclick = function() {
-        // Change login button text
-        document.getElementById("submit_api").innerHTML = "Create New Account!";
-        document.getElementById("new_user").innerHTML = "Already a User? <a id='old_user' href='file:///C:/Users/8kyle/OneDrive/Documents/Revel-Wayfinding/ClientSite/login.html'>Click here!</a>";
+        console.log("after call");
     }
 
     //-------------------------------------------------------------------------------------
@@ -364,7 +436,7 @@
         document.getElementById("login_container").style.display = "none";
         document.getElementById("editor_container").style.display = "none";
         document.getElementById("buildings_table").innerHTML = "";
-        firebase.database().ref('/' + api_key + '/buildings').once('value').then(function(snapshot) {
+        firebase.database().ref('/' + user_api_key + '/buildings').once('value').then(function(snapshot) {
             // Getting Grid Info From Firebase
             if (snapshot.val() !== null) {
                 var keys = Object.keys(snapshot.val());
@@ -417,7 +489,7 @@
 
                         var delButton = document.createElement('button');
                         var editButton = document.createElement('button');
-                        td3.innerHTML = "<button class='login_btn' onclick=loadOldGrid('" + api_key + "','" + key + "')>Edit</button>";
+                        td3.innerHTML = "<button class='login_btn' onclick=loadOldGrid('" + user_api_key + "','" + key + "')>Edit</button>";
                         td4.innerHTML = "<button class='login_btn' onclick=deleteGridData('" + key + "')>Delete</button>";
 
                         td5.innerHTML = "<button class='login_btn' onclick=showStores('" + key + "')>Stores</button>";
@@ -444,10 +516,13 @@
     }
 
     logout_btn.onclick = function() {
-        window.localStorage.setItem("api_key", "");
-        document.getElementById("grid_list_container").style.display = "none";
-        document.getElementById("login_container").style.display = "inline";
-        document.getElementById("editor_container").style.display = "none";
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+            document.getElementById("login_container").style.display = "block";
+            document.getElementById("grid_list_container").style.display = "none";
+        }).catch(function(error) {
+            // An error happened.
+        });
     }
 
     back_btn.onclick = function() {
