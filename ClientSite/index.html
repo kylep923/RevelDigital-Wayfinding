@@ -55,7 +55,7 @@
             <div class="container">
                 <label><b>Login</b></label>
                 <input id="user_email" type="text" placeholder="Enter Email" name="user_email" required>
-                <input id="user_password" type="text" placeholder="Enter Password" name="user_password" required>
+                <input id="user_password" type="password" placeholder="Enter Password" name="user_password" required>
                 <button id="user_login_btn" type="submit" class="login_btn">Login</button>
             </div>
 
@@ -76,7 +76,8 @@
             <div class="container">
                 <label><b>Sign Up</b></label>
                 <input id="new_user_email" type="text" placeholder="Enter Email" name="new_user_email" required>
-                <input id="new_user_password" type="text" placeholder="Enter Password" name="new_user_password" required>
+                <input id="new_user_password" type="password" placeholder="Enter Password" name="new_user_password" required>
+                <input id="new_user_password2" type="password" placeholder="Enter Password Again" name="new_user_password" required>
                 <input id="new_api_key" type="text" placeholder="Enter API Key" name="api_key" required>
                 <button id="new_user_login" type="submit" class="login_btn">Sign Up</button>
             </div>
@@ -243,6 +244,20 @@
     document.getElementById("grid_list_container").style.display = "none";
     document.getElementById("editor_container").style.display = "none";
 
+
+    // Setting the persistance of login data
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+        .then(function() {
+            // New sign-in will be persisted with session persistence.
+            return firebase.auth().signInWithEmailAndPassword(email, password);
+        })
+        .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+        })
+
+
     // Database info and globals
     //-------------------------------------------------------------------------------------
     var database = firebase.database();
@@ -322,6 +337,7 @@
             // User is signed in.
             if (new_user) {
                 user_api_key = document.getElementById("new_api_key").value;
+                document.getElementById("new_api_key").innerHTML = "";
                 addNewUser(user_api_key, user);
                 new_user = false;
             } else {
@@ -356,6 +372,10 @@
     user_login_btn.onclick = function() {
         var email = document.getElementById("user_email").value;
         var password = document.getElementById("user_password").value;
+
+        document.getElementById("user_email").innerHTML = "";
+        document.getElementById("user_password").innerHTML = "";
+
         firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -368,15 +388,25 @@
     new_user_login.onclick = function() {
         var email = document.getElementById("new_user_email").value;
         var password = document.getElementById("new_user_password").value;
-        console.log(email + " | " + password);
-        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode + ": " + errorMessage);
-            // ...
-        });
-        new_user = true;
+        var password2 = document.getElementById("new_user_password2").value;
+
+        document.getElementById("new_user_email").innerHTML = "";
+        document.getElementById("new_user_password").innerHTML = "";
+        document.getElementById("new_user_password2").innerHTML = "";
+
+        if (password === password2) {
+            console.log(email + " | " + password);
+            firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode + ": " + errorMessage);
+                // ...
+            });
+            new_user = true;
+        } else {
+            alert("Passwords do not match!");
+        }
 
     }
 
