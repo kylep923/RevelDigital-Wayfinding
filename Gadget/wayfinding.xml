@@ -606,6 +606,7 @@
         var building_name = prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
+            console.log(building);
             var obj = JSON.parse(building.floorGrids);
 
             if (obj) {
@@ -642,6 +643,7 @@
         var building_name = prefs.getString("dataName");
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
+            console.log(building);
             var obj = JSON.parse(building.floorGrids);
             if (obj) {
 
