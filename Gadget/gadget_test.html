@@ -325,7 +325,7 @@
         var toY;
         var toFloor;
         STORES.forEach(function(element) {
-            if (element.name === storeName) {
+            if (element.name.replace(/[^0-9a-z]/gi, '').toUpperCase() === storeName.replace(/[^0-9a-z]/gi, '').toUpperCase()) {
                 toX = element.x;
                 toY = element.y;
                 toFloor = element.floor;

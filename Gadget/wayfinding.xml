@@ -326,7 +326,7 @@
         var toY;
         var toFloor;
         STORES.forEach(function(element) {
-            if (element.name === storeName) {
+            if (element.name.replace(/[^0-9a-z]/gi, '').toUpperCase() === storeName.replace(/[^0-9a-z]/gi, '').toUpperCase()) {
                 toX = element.x;
                 toY = element.y;
                 toFloor = element.floor;
@@ -604,11 +604,8 @@
 
     function readInData() {
         var building_name = prefs.getString("dataName");
-        console.log(building_name);
-        console.log(api_key);
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
-            console.log(building);
             var obj = JSON.parse(building.floorGrids);
 
             if (obj) {
@@ -643,11 +640,8 @@
 
     function readInStores() {
         var building_name = prefs.getString("dataName");
-        console.log(building_name);
-        console.log(api_key);
         firebase.database().ref('/' + api_key + '/buildings/' + building_name).once('value').then(function(snapshot) {
             building = snapshot.val();
-            console.log(building);
             var obj = JSON.parse(building.floorGrids);
             if (obj) {
 
