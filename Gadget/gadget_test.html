@@ -634,7 +634,7 @@
                 swiper.update();
                 if (typeof Client != 'undefined') {
                     console.log('client found');
-                    Client.callback(JSON.stringify('{"data":' + building_name + "}"));
+                    Client.callback('{"data":"' + building_name + '"}');
                 } else {
                     console.log('client not found');
                 }
