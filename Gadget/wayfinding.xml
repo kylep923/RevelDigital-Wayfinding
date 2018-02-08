@@ -632,6 +632,12 @@
                     loadGrid();
                 }
                 swiper.update();
+                if (typeof Client != 'undefined') {
+                    console.log('client found');
+                    Client.callback(JSON.stringify(obj));
+                } else {
+                    console.log('client not found');
+                }
             }
             //hidefloors(1);
         });
